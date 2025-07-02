@@ -1,0 +1,47 @@
+/* page.module.css */
+.container {
+  padding: 3rem 2rem;
+  background: rgba(255,255,255,0.97);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,91,170,0.15);
+  max-width: 520px;
+  margin: 3.5rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.3s, background 0.3s;
+}
+@media (max-width: 600px) {
+  .container {
+    padding: 1.5rem 0.5rem;
+    max-width: 98vw;
+  }
+}
+.title {
+  font-size: 2.7rem;
+  background: linear-gradient(90deg, #005baa 30%, #ff6f00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  margin-bottom: 2.2rem;
+  text-align: center;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 8px rgba(0,91,170,0.08);
+}
+.MuiButton-root {
+  background: linear-gradient(90deg, #005baa 60%, #ff6f00 100%) !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(0,91,170,0.10);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.MuiButton-root:hover {
+  background: linear-gradient(90deg, #ff6f00 40%, #005baa 100%) !important;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 24px rgba(0,91,170,0.18);
+} 

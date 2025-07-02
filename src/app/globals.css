@@ -1,8 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f7fa;
+  --foreground: #222;
+  --primary: #005baa;
+  --secondary: #ff6f00;
+  --border-radius: 8px;
+  --input-bg: #fff;
+  --input-border: #b3c6e0;
+  --input-focus: #005baa;
+}
+
+.theme-light {
+  --background: #f5f7fa;
+  --foreground: #222;
+  --primary: #005baa;
+  --secondary: #ff6f00;
+  --input-bg: #fff;
+  --input-border: #b3c6e0;
+  --input-focus: #005baa;
+}
+
+.theme-dark {
+  --background: #222;
+  --foreground: #fff;
+  --primary: #005baa;
+  --secondary: #ff6f00;
+  --input-bg: #222;
+  --input-border: #005baa;
+  --input-focus: #ff6f00;
+}
+
+.theme-custom {
+  --background: #e0f7fa;
+  --foreground: #006064;
+  --primary: #005baa;
+  --secondary: #ff6f00;
+  --input-bg: #fff;
+  --input-border: #b3c6e0;
+  --input-focus: #005baa;
 }
 
 @theme inline {
@@ -22,5 +58,50 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+input, textarea, select {
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: var(--border-radius);
+  padding: 10px 12px;
+  font-size: 1rem;
+  color: var(--foreground);
+  transition: border 0.2s, box-shadow 0.2s, color 0.2s, background 0.2s;
+  outline: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 2px #e3f0ff;
+}
+
+button, .MuiButton-root {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+}
+button:hover, .MuiButton-root:hover {
+  background: var(--secondary);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,91,170,0.08);
+}
+
+.MuiOutlinedInput-root {
+  border-radius: var(--border-radius) !important;
+}
+
+.MuiTypography-h4, h1, .main-title {
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: 1px;
 }

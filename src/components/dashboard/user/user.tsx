@@ -25,6 +25,7 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Transection from "./dashboard/Transection";
+import Technology from "@/components/nav/Technology";
 
 const drawerWidth = 300;
 
@@ -57,6 +58,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
     justifyContent: "flex-end",
     padding: theme.spacing(0, 1),
     minHeight: 56,
+    marginTop: 64,
 }));
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
@@ -124,18 +126,21 @@ export default function User({ children }: { children?: React.ReactNode }) {
             <Drawer variant="permanent" open={open}
                 PaperProps={{ className: 'hidden-scrollbar', sx: { background: "#23272f", color: "#fff" } }}>
                 <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === "rtl" ? (
-                            <ChevronRightIcon sx={{ color: 'white' }} />
-                        ) : (
-                            <ChevronLeftIcon sx={{ color: "white" }} />
-                        )}
-                    </IconButton>
+                  <Box sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", py: 2 }}>       
+                    {/* Avatar người dùng */}
+                    <Avatar sx={{ width: 56, height: 56, mb: 1, bgcolor: "#1976d2", fontWeight: 700 }}>N</Avatar>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600, color: "#fff", mb: 1 }}>
+                      Người dùng
+                    </Typography>
+                  </Box>
+                  <IconButton onClick={handleDrawerClose}>
+                    {theme.direction === "rtl" ? (
+                      <ChevronRightIcon sx={{ color: 'white' }} />
+                    ) : (
+                      <ChevronLeftIcon sx={{ color: "white" }} />
+                    )}
+                  </IconButton>
                 </DrawerHeader>
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 2 }}>
-                    <Avatar sx={{ width: 64, height: 64, mb: 1, bgcolor: "#1976d2" }}>N</Avatar>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600, color: "#fff" }}>Người dùng</Typography>
-                </Box>
                 <Divider sx={{ bgcolor: "#444" }} />
                 <List>
                     <ListItem disablePadding sx={{ display: "block" }}>
@@ -185,7 +190,7 @@ export default function User({ children }: { children?: React.ReactNode }) {
                             {menuOpen ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
                         <Collapse in={menuOpen} timeout="auto" unmountOnExit>
-                            <List component="div" disablePadding>
+                            <List component="div" disablePadding sx={{ border: '1px solid #1976d2', background: '#232f3e', borderRadius: 2, mx: 2, my: 1 }}>
                                 <ListItemButton sx={{ pl: 4, borderRadius: 2, '&:hover': { background: '#1976d2', color: '#fff' } }}>
                                     <ListItemIcon sx={{ color: '#fff' }}>
                                         <MailIcon />
@@ -197,10 +202,11 @@ export default function User({ children }: { children?: React.ReactNode }) {
                     </ListItem>
                 </List>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>
-                <Transection/>
-                {children}
-            </Box>
+           <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>
+           <Technology />  
+          <Transection />
+          {children}
+        </Box>
         </Box>
     );
 }

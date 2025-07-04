@@ -13,6 +13,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 
 import { useRouter } from "next/navigation";
+import Technology from "@/components/nav/Technology";
 export default function Page() {
     const router = useRouter();
     const [email, setEmail] = useState<string>("");
@@ -92,6 +93,11 @@ export default function Page() {
      sx={{p : 3}}
      onSubmit={handleSubmit}
      className={styles.container}>
+      <Typography variant="h4" gutterBottom
+      sx={{fontFamily: "Lato", fontSize: 25, fontWeight: "bolder"}}
+      >
+     <Technology/>
+      </Typography>
     <Typography
     variant="h4"
     gutterBottom

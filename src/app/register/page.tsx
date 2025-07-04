@@ -7,6 +7,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useState } from "react";
 import type { AlertColor } from "@mui/material";
+import Technology from "@/components/nav/Technology";
 
 export default function Page() {
     const [name, setName] = useState('');
@@ -42,12 +43,12 @@ export default function Page() {
         password,
       }),
     }); 
-
+     const data = await response.json();
+     console.log(data);
     if (response.ok) {
-      setSnackBarMessage("Đăng Ký Thành Công!");
+      setSnackBarMessage(data?.msg || "Đăng Ký Thành Công!");
       setSnackBarSeverity("success");
     } else {
-      const data = await response.json();
       setSnackBarMessage(data.err || "Đăng Ký Thất Bại!");
       setSnackBarSeverity("error");
     }
@@ -90,6 +91,10 @@ export default function Page() {
             sx={{ p: 3 }}
             onSubmit={handleRegister}
           >
+            <Typography variant="h4"
+            gutterBottom sx={{fontFamily: "Lato", fontSize: 25, fontWeight: "bolder"}}>
+             <Technology/>
+            </Typography>
             <Typography
               variant="h4"
               gutterBottom

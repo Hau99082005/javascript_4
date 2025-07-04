@@ -40,10 +40,11 @@ export const authOptions = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     jwt: async ({ token }: { token: any }) => {
         const userByemail = await User.findOne({ email: token.email }).lean();
-        if (userByemail) {
-            // Loại bỏ trường password khỏi user
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { password, ...userWithoutPassword } = userByemail as any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const userObj = userByemail as Record<string, any> | null;
+        if (userObj) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { password, ...userWithoutPassword } = userObj;
             token.user = userWithoutPassword;
         } else {
             token.user = null;

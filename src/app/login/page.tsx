@@ -1,19 +1,20 @@
 "use client";
-import { Container,TextField, Button,Typography,Box,IconButton, Grid,
+import { Container,TextField, Button,Typography,Box,IconButton, Grid, Link,
     InputAdornment
 } from "@mui/material";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import styles from "../page.module.css";
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 
+import { useRouter } from "next/navigation";
 export default function Page() {
+    const router = useRouter();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [showPassword, setshowPassword] = useState<boolean>(false);
@@ -51,6 +52,14 @@ export default function Page() {
             message: "Đăng Nhập Thành Công!",
             severity: "success"
         })
+        const session = await getSession();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const user = session?.user as any;
+        if (user?.role) {
+          router.push(`/dashboard/${user.role}`);
+        } else {
+          router.push("/dashboard/user");
+        }
      }
 
     }catch(error) {
@@ -188,6 +197,11 @@ export default function Page() {
             }}
             style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder"}}
             >Đăng Nhập</Button>
+            <Link href="/register"
+            variant='body2'
+            sx={{
+              mt:2
+            }} style={{textDecoration: "none", color: 'var(--foreground)'}}>Bạn chưa có tài khoản? Đăng Ký</Link>
            <div className="flex gap-2">
              {/* Nút đăng nhập Google và Facebook */}
             <Button
@@ -237,7 +251,7 @@ export default function Page() {
     </Container>
     <Snackbar
       open={snackbar.open}
-      autoHideDuration={4000}
+      autoHideDuration={6000}
       onClose={() => setSnackbar({ ...snackbar, open: false })}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
     >

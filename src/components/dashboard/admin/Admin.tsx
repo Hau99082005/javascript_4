@@ -26,6 +26,7 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Technology from "@/components/nav/Technology";
 import Transection from "../user/dashboard/Transection";
+import { Category } from "@mui/icons-material";
 
 const drawerWidth = 300;
 
@@ -92,6 +93,7 @@ export default function User({ children }: { children?: React.ReactNode }) {
     const [open, setOpen] = React.useState(true);
     const router = useRouter();
     const [menuOpen, setMenuOpen] = React.useState(false);
+    const [isCollapse, setIsCollapse] = React.useState(false);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -102,6 +104,9 @@ export default function User({ children }: { children?: React.ReactNode }) {
     const handleMenuClick = () => {
         setMenuOpen((prev) => !prev);
     };
+    const handleCollapse=()=> {
+        setIsCollapse(!isCollapse);
+    }
     return (
         <Box sx={{ display: "flex", minHeight: "100vh", background: "#f5f6fa" }}>
             <CssBaseline />
@@ -200,6 +205,46 @@ export default function User({ children }: { children?: React.ReactNode }) {
                             </List>
                         </Collapse>
                     </ListItem>
+                    {/* start category */}
+                   <ListItem disablePadding 
+                   sx={{ display: "block"}} onClick={handleCollapse}>
+                    <ListItemButton sx={{
+                        minHeight: 50,
+                        justifyContent: open ? "initial":"center",
+                        px: 3,
+                    }}>
+                    <ListItemIcon
+                    sx={{minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                    }}>
+                    <Category sx={{ color: "white"}}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Quản Lý Danh Mục" sx={{opacity: 1}}>
+                     {isCollapse ? <ExpandLess/> : <ExpandMore/>}
+                    </ListItemText>
+                    {/* end category */}
+                    </ListItemButton>
+                   </ListItem>
+                   <Collapse in={isCollapse} timeout="auto" unmountOnExit>
+                   {["all-category"].map((text) => (
+                    <ListItem key={text} disablePadding sx={{display: "block"}}>
+                    <ListItemButton sx={{
+                        minHeight: 50,
+                        justifyContent: open ? "initial" : "center",
+                        px: 3,
+                        marginLeft: "30px",
+                        color: "white",
+                        borderBottom: "1px solid white",
+                    }}>
+                     <ListItemText
+                     primary={text.replace(/-/g," ")}
+                     sx={{ opacity: open ? 1 : 0}}>
+                     </ListItemText>
+                    </ListItemButton>
+                    </ListItem>
+                   ))}
+                   </Collapse>
                 </List>
             </Drawer>
            <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>

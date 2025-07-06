@@ -67,7 +67,7 @@ export default function Page() {
         console.log(error);
         setSnackbar({
             open:true,
-            message: "đã xảy ra lỗi, vui lòng thử lại",
+            message: "đã xảy ra lỗi, vui lòng thử lại", 
             severity: "error",
         })
     }

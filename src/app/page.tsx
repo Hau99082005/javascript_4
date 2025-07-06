@@ -4,7 +4,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { Box, Typography, Button, Card, CardContent, TextField, CircularProgress, Fade, Avatar, InputAdornment, IconButton, Fab, Modal } from '@mui/material';
+import { Box, Typography, Button, Card, CardContent, TextField, CircularProgress, Fade, Avatar, InputAdornment, IconButton, Fab, Modal, Stack, Switch } from '@mui/material';
 import { styled } from '@mui/system';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -107,6 +107,7 @@ export default function Home() {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [aiModalOpen, setAiModalOpen] = React.useState(false);
   const currentTheme = themes['fpt'];
+  const [isAnnual, setIsAnnual] = useState(false);
 
   React.useEffect(() => {
     if (searchParams.get('error') === 'unauthorized') {
@@ -193,6 +194,72 @@ export default function Home() {
               Mua Ngay
             </Button>
           </motion.div>
+          <Box sx={{ mb: 5}}>
+           <motion.div initial={{ opacity: 0, y: 10}}
+           animate={{ opacity: 1, y: 0}} transition={{ duration: 0.8}}>
+           <Typography variant='h5' sx={{ mb: 2, fontWeight: 'bold', letterSpacing: '5px',
+            padding: '5px 10px', borderRadius: '5px', color: '#fff', display: 'inline-block',
+            textShadow: '1px 5px 10px rgba(0,0,0,0.5)',
+           }}>
+           Chọn gói đăng ký của bạn
+           </Typography>
+           </motion.div>
+           <Stack direction="row" alignItems="center"
+           justifyContent="center" spacing={1}>
+           <motion.div initial={{opacity: 0, scale: 0.8}}
+           animate={{ opacity: 1, scale: 1}} transition={{ duration: 0.8}}>
+            <Box sx={{ display: 'inline-block', padding: '5px 10px', borderRadius: '5px',
+              background: 'linear-gradient(100deg, #4caf50, #2e7d32)', color: '$fff', fontSize: '16px',
+              fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase', boxShadow: '0 5px 10px rgba(0,0,0,0.25)',
+              transition: 'background 0.5s ease', 
+              '&:hover': {
+                background: 'linear-gradient(100deg, #66bb6a, #388e3c)',
+                boxShadow: '0px 7px 14px rgba(0,0,0,0.25)',
+              }
+            }}>
+            Hàng Tháng 
+            </Box>
+           </motion.div>
+           <Switch
+           checked={isAnnual} onChange={() =>setIsAnnual(!isAnnual)}
+           inputProps={{'aria-label':'Chuyển đổi phương thức đăng ký gói'}}/>
+           <motion.div initial={{ opacity: 0, scale: 0.9}}
+           animate={{ opacity: 1, scale: 1}} transition={{ duration: 0.8}}>
+           <Box sx={{ display: 'inline-block', padding: '5px 10px',  borderRadius: '5px', 
+            background: 'linear-gradient(100deg, #4caf50, #2e7d32)', color: '#fff', fontSize: '18px',
+            fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase',
+            boxShadow: '0px 5px 10px rgba(0,0,0,0.25)', transition: 'background 0.5s ease',
+            '&:hover': {
+              background: 'linear-gradient(100deg, #66bb6a, #388e3c)',
+              boxShadow: '0px 5px 10px rgba(0,0,0,0.25)',
+            }
+           }}>
+          <Typography variant='body1'>
+           Hàng Năm
+          </Typography>
+           </Box>
+           </motion.div>
+           </Stack>
+           <Typography variant='h4' color='primary' sx={{ mt: 2, fontWeight: 'bold'}}>
+             <motion.div initial={{ opacity: 0, scale: 0.8}} 
+             animate={{ opacity: 1, scale: 1}} transition={{duration: 0.8}}>
+             <Box sx={{ display: "inline-block", padding: "5px 10px",
+              borderRadius: '10px', background: 'linear-gradient(90deg, #ff8a00, #e52e71)',
+              color: '#fff', fontSize: '16px',fontWeight: 'bold', textAlign: 'center',
+              boxShadow: '0px 5px 10px rgba(0, 0,0,0.25)',  transition: 'background 0.5 ease, transform 0.3s ease',
+              '&:hover': {
+                background: 'linear-gradient(90deg, #e52e71, #ff8a00)',
+                transform: 'scale(1)',
+                boxShadow: '0px 5px 10px rgba(0,0,0,0.25)',
+              }
+             }}>
+             <Typography variant='body1'>
+             {isAnnual ? "199.000 đ / năm": "99.000 đ / tháng"}
+             </Typography>
+             </Box>
+             </motion.div>
+           </Typography>
+          </Box>
           <Box sx={{ mb: 5, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             <motion.div initial={{ opacity: 0, y: 10}}
               animate={{ opacity: 1, y: 0}}

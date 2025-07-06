@@ -56,10 +56,10 @@ export default function Page() {
         const session = await getSession();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const user = session?.user as any;
-        if (user?.role) {
-          router.push(`/dashboard/${user.role}`);
+        if (user?.role === "admin") {
+          router.push("/dashboard/admin");
         } else {
-          router.push("/dashboard/user");
+          router.push("/");
         }
      }
 

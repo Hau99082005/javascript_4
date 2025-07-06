@@ -46,8 +46,10 @@ export const authOptions = {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { password, ...userWithoutPassword } = userObj;
             token.user = userWithoutPassword;
+            token.role = userWithoutPassword.role;
         } else {
             token.user = null;
+            token.role = null;
         }
         return token;
     },

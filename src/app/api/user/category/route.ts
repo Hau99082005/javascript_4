@@ -18,9 +18,10 @@ export async function GET() {
 export async function POST(req:Request) {
     await dbConnect();
     const body = await req.json()
-    const {name} = body;
+    const {name, status = true} = body;
+    console.log("category name", name);
     try {
-     const category = await Category.create({name})
+     const category = await Category.create({name, status})
      console.log(category)
      return NextResponse.json(category)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

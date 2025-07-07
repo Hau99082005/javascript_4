@@ -107,6 +107,10 @@ export default function User({ children }: { children?: React.ReactNode }) {
     const handleCollapse=()=> {
         setIsCollapse(!isCollapse);
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleNavigation=(path: any)=> {
+        router.push(`/dashboard/admin/${path}`)
+    }
     return (
         <Box sx={{ display: "flex", minHeight: "100vh", background: "#f5f6fa" }}>
             <CssBaseline />
@@ -208,9 +212,10 @@ export default function User({ children }: { children?: React.ReactNode }) {
                     {/* start category */}
                    <ListItem disablePadding 
                    sx={{ display: "block"}} onClick={handleCollapse}>
-                    <ListItemButton sx={{
+                    <ListItemButton
+                    sx={{
                         minHeight: 50,
-                        justifyContent: open ? "initial":"center",
+                        justifyContent: open ? "initial" : "center",
                         px: 3,
                     }}>
                     <ListItemIcon
@@ -229,7 +234,9 @@ export default function User({ children }: { children?: React.ReactNode }) {
                    <Collapse in={isCollapse} timeout="auto" unmountOnExit>
                    {["all-category"].map((text) => (
                     <ListItem key={text} disablePadding sx={{display: "block"}}>
-                    <ListItemButton sx={{
+                    <ListItemButton
+                    onClick={() => handleNavigation(text)}
+                    sx={{
                         minHeight: 50,
                         justifyContent: open ? "initial" : "center",
                         px: 3,

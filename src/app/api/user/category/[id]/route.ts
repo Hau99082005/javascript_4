@@ -26,6 +26,7 @@ export async function DELETE(req: Request, context: { params: { id: any; }; }) {
   await dbConnect();
   try {
    const deletingCategory = await Category.findByIdAndDelete(context.params.id)
+   console.log("Xoá danh mục", deletingCategory);
    return NextResponse.json(deletingCategory);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }catch(error:any) {

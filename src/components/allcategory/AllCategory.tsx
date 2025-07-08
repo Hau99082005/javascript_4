@@ -3,13 +3,16 @@ import React, { useEffect, useState } from "react";
 import {
   Box, Button, TextField, Typography, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, IconButton, Dialog, DialogTitle, DialogContent,
-  DialogActions, Snackbar, Alert, CircularProgress
+  DialogActions, Snackbar, Alert, CircularProgress,
+  TablePagination,
+  InputAdornment
 } from "@mui/material";
-import { Delete, Add } from "@mui/icons-material";
+import { Delete, Add, Edit, Search, Category } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { addCategory, fetchCategories, deleteCategory, updateCategory } from "@/reduxslice/categorySlice";
 import { store } from "@/app/store";
 import Switch from '@mui/material/Switch';
+import Technology from "../nav/Technology";
 
 type RootState = ReturnType<typeof store.getState>;
 type AppDispatch = typeof store.dispatch;
@@ -20,6 +23,7 @@ export default function AllCategory() {
 
   const [openAddModal, setOpenAddModal] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [filter, setFilter] = useState("");
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<{ _id: string; name: string } | null>(null);
   const [snackbar, setSnackbar] = useState({
@@ -27,6 +31,10 @@ export default function AllCategory() {
     message: "",
     severity: "success" as "success" | "error",
   });
+  const [openEditModal, setOpenEditModal] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [editCategory, setEditCategory] = useState<any>(null);
+  const [editCategoryName, setEditCategoryName] = useState("");
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -42,6 +50,14 @@ export default function AllCategory() {
   const handleCloseDeleteModal = () => setOpenDeleteModal(false);
 
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleOpenEditModal = (category: any) => {
+    setEditCategory(category);
+    setEditCategoryName(category.name);
+    setOpenEditModal(true);
+  };
+  const handleCloseEditModal = () => setOpenEditModal(false);
 
   const handleAddCategory = () => {
     if (!newCategoryName.trim()) return;
@@ -74,10 +90,23 @@ export default function AllCategory() {
       });
   };
 
+  const handleEditCategory = () => {
+    if (!editCategory || !editCategoryName.trim()) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dispatch(updateCategory({ ...editCategory, name: editCategoryName }) as any)
+      .unwrap()
+      .then(() => {
+        setSnackbar({ open: true, message: "Cập nhật danh mục thành công!", severity: "success" });
+        setOpenEditModal(false);
+      })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .catch((error: any) => {
+        setSnackbar({ open: true, message: `Lỗi: ${error}`, severity: "error" });
+      });
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleToggleStatus = (cat: any) => {
-    // Nếu đã có API updateCategory thì gọi dispatch(updateCategory({...cat, status: !cat.status}))
-    // Nếu chưa có thì chỉ cập nhật tạm thời trên UI (optimistic update)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch(updateCategory({ ...cat, status: !cat.status }) as any)
       .unwrap()
@@ -90,120 +119,353 @@ export default function AllCategory() {
       });
   };
 
+  const filteredCategories = (categories ?? []).filter((category) =>
+    (category?.name ?? '').toLowerCase().includes(filter.toLowerCase())
+  );
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(e.target.value);
+  };
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (_event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <Box sx={{
-      p: { xs: 2, md: 5 },
-      minHeight: '70vh',
-      background: 'linear-gradient(135deg, #232526 0%, #414345 100%)',
-      borderRadius: 5,
-      boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
-      backdropFilter: 'blur(8px)',
-      border: '1px solid rgba(255,255,255,0.18)',
-      maxWidth: 1100,
-      mx: 'auto',
-      mt: 6,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f4c75 100%)',
+      p: 3,
     }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+      {/* Header */}
+     <Box
+  sx={{
+    textAlign: "center",
+    mb: 4,
+    pt: 2,
+  }}
+  >
+  {/* Logo hoặc chữ TECHNOLOGY */}
+  <Box sx={{ display: "inline-block", mb: 1 }}>
+    <Technology />
+  </Box>
+
+  {/* Dòng mô tả bên dưới */}
+  <Typography
+    variant="h6"
+    sx={{
+      color: "rgba(255, 255, 255, 0.85)",
+      fontWeight: 400,
+    }}
+  >
+    Quản lý danh mục sản phẩm hiệu quả
+   </Typography>
+     </Box>
+
+      {/* Main Content Container */}
+      <Box sx={{
+        maxWidth: 1200,
+        mx: 'auto',
+        background: 'rgba(255, 255, 255, 0.05)',
+        borderRadius: 3,
+        p: 4,
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 107, 53, 0.2)',
+        boxShadow: '0 8px 32px rgba(255, 107, 53, 0.1)',
+      }}>
+        {/* Title Section */}
         <Box sx={{
-          width: 48, height: 48, mr: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: 'linear-gradient(135deg, #00c6ff 0%, #0072ff 100%)', borderRadius: '50%', boxShadow: '0 2px 8px #00c6ff44',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          mb: 4,
         }}>
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2L15 8H9L12 2ZM12 22C13.1046 22 14 21.1046 14 20H10C10 21.1046 10.8954 22 12 22ZM4.22 10.47L2.81 9.06C2.42 8.67 2.42 8.04 2.81 7.65C3.2 7.26 3.83 7.26 4.22 7.65L5.63 9.06C6.02 9.45 6.02 10.08 5.63 10.47C5.24 10.86 4.61 10.86 4.22 10.47ZM19.78 10.47C19.39 10.86 18.76 10.86 18.37 10.47C17.98 10.08 17.98 9.45 18.37 9.06L19.78 7.65C20.17 7.26 20.8 7.26 21.19 7.65C21.58 8.04 21.58 8.67 21.19 9.06L19.78 10.47ZM17.66 17.66C17.27 18.05 16.64 18.05 16.25 17.66C15.86 17.27 15.86 16.64 16.25 16.25L17.66 14.84C18.05 14.45 18.68 14.45 19.07 14.84C19.46 15.23 19.46 15.86 19.07 16.25L17.66 17.66ZM6.34 17.66L4.93 16.25C4.54 15.86 4.54 15.23 4.93 14.84C5.32 14.45 5.95 14.45 6.34 14.84L7.75 16.25C8.14 16.64 8.14 17.27 7.75 17.66C7.36 18.05 6.73 18.05 6.34 17.66Z" fill="#fff"/></svg>
+          <Box sx={{
+            width: 50,
+            height: 50,
+            borderRadius: '50%',
+            background: 'linear-gradient(45deg, #ff6b35 0%, #f7931e 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mr: 2,
+            boxShadow: '0 4px 15px rgba(255, 107, 53, 0.4)',
+          }}>
+            <Category sx={{ color: 'white', fontSize: 28 }} />
+          </Box>
+          <Typography
+            variant="h4"
+            sx={{
+              color: '#ff6b35',
+              fontWeight: 'bold',
+              textShadow: '1px 1px 2px rgba(255, 107, 53, 0.3)',
+            }}
+          >
+            Danh mục sản phẩm điện tử
+          </Typography>
         </Box>
-        <Typography
-          variant="h5"
-          sx={{
-            color: '#fff',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            textShadow: '1px 1px 8px #00c6ff88',
-            letterSpacing: 2,
-            fontFamily: 'Montserrat, Roboto, Arial',
-          }}
-        >
-          Danh mục sản phẩm điện tử
-        </Typography>
+
+        {/* Search and Add Button */}
+        <Box sx={{
+          display: 'flex',
+          gap: 2,
+          mb: 3,
+          flexDirection: { xs: 'column', md: 'row' },
+        }}>
+          <TextField
+            fullWidth
+            placeholder="Tìm kiếm danh mục..."
+            value={filter}
+            onChange={handleFilterChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search sx={{ color: '#ff6b35' }} />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                borderRadius: 2,
+                '& fieldset': {
+                  borderColor: 'rgba(255, 107, 53, 0.3)',
+                },
+                '&:hover fieldset': {
+                  borderColor: 'rgba(255, 107, 53, 0.5)',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#ff6b35',
+                },
+              },
+              '& .MuiInputBase-input': {
+                color: 'white',
+                '&::placeholder': {
+                  color: 'rgba(255, 255, 255, 0.6)',
+                },
+              },
+            }}
+          />
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={handleOpenAddModal}
+            sx={{
+              minWidth: 200,
+              height: 56,
+              background: 'linear-gradient(45deg, #ff6b35 0%, #f7931e 100%)',
+              borderRadius: 2,
+              fontWeight: 'bold',
+              fontSize: 16,
+              boxShadow: '0 4px 15px rgba(255, 107, 53, 0.4)',
+              textTransform: 'none',
+              '&:hover': {
+                background: 'linear-gradient(45deg, #f7931e 0%, #ff6b35 100%)',
+                boxShadow: '0 6px 20px rgba(255, 107, 53, 0.6)',
+              },
+            }}
+          >
+            Thêm danh mục
+          </Button>
+        </Box>
+
+        {/* Loading */}
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+            <CircularProgress sx={{ color: '#ff6b35' }} size={60} />
+          </Box>
+        ) : (
+          <>
+            {/* Table */}
+            <TableContainer component={Paper} sx={{
+              borderRadius: 2,
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(5px)',
+              border: '1px solid rgba(255, 107, 53, 0.2)',
+              overflow: 'hidden',
+            }}>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{
+                    background: 'linear-gradient(90deg, #ff6b35 0%, #f7931e 100%)',
+                  }}>
+                    <TableCell sx={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                      py: 2,
+                    }}>
+                      STT
+                    </TableCell>
+                    <TableCell sx={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                      py: 2,
+                    }}>
+                      Tên danh mục
+                    </TableCell>
+                    <TableCell sx={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                      py: 2,
+                    }}>
+                      Trạng thái
+                    </TableCell>
+                    <TableCell align="right" sx={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                      py: 2,
+                    }}>
+                      Thao tác
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredCategories.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((cat, idx) => (
+                    <TableRow
+                      key={cat._id}
+                      sx={{
+                        background: idx % 2 === 0 ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 107, 53, 0.05)',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          background: 'rgba(255, 107, 53, 0.1)',
+                          transform: 'translateY(-1px)',
+                        },
+                      }}
+                    >
+                      <TableCell sx={{
+                        color: '#ff6b35',
+                        fontWeight: 600,
+                        fontSize: 16,
+                        py: 2,
+                      }}>
+                        {page * rowsPerPage + idx + 1}
+                      </TableCell>
+                      <TableCell sx={{
+                        color: 'white',
+                        fontSize: 16,
+                        py: 2,
+                      }}>
+                        {cat.name}
+                      </TableCell>
+                      <TableCell sx={{ py: 2 }}>
+                        <Switch
+                          checked={cat.status !== false}
+                          onChange={() => handleToggleStatus(cat)}
+                          sx={{
+                            '& .MuiSwitch-switchBase.Mui-checked': {
+                              color: '#ff6b35',
+                            },
+                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                              backgroundColor: '#ff6b35',
+                            },
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell align="right" sx={{ py: 2 }}>
+                        <IconButton
+                          onClick={() => handleOpenEditModal(cat)}
+                          sx={{
+                            color: '#ff6b35',
+                            mr: 1,
+                            '&:hover': {
+                              background: 'rgba(255, 107, 53, 0.1)',
+                            },
+                          }}
+                        >
+                          <Edit />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleOpenDeleteModal(cat)}
+                          sx={{
+                            color: '#ff4757',
+                            '&:hover': {
+                              background: 'rgba(255, 71, 87, 0.1)',
+                            },
+                          }}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {filteredCategories.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={4} align="center" sx={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        py: 4,
+                        fontSize: 16,
+                      }}>
+                        Không có danh mục nào.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            {/* Pagination */}
+            <Box sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              mt: 3,
+            }}>
+              <TablePagination
+                component="div"
+                count={filteredCategories.length}
+                page={page}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPageOptions={[5, 10, 25]}
+                sx={{
+                  color: 'white',
+                  '& .MuiTablePagination-selectIcon': {
+                    color: '#ff6b35',
+                  },
+                  '& .MuiTablePagination-actions button': {
+                    color: '#ff6b35',
+                  },
+                }}
+              />
+            </Box>
+          </>
+        )}
       </Box>
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<Add />}
-        onClick={handleOpenAddModal}
-        sx={{
-          mb: 2,
-          fontWeight: 'bold',
-          borderRadius: 3,
-          background: 'linear-gradient(90deg, #00c6ff 0%, #0072ff 100%)',
-          boxShadow: '0 2px 8px #00c6ff44',
-          ':hover': { background: 'linear-gradient(90deg, #0072ff 0%, #00c6ff 100%)' },
-        }}
-      >
-        + Thêm danh mục
-      </Button>
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <TableContainer component={Paper} sx={{
-          borderRadius: 4,
-          background: 'rgba(255,255,255,0.08)',
-          boxShadow: '0 4px 24px 0 rgba(0,198,255,0.10)',
-          backdropFilter: 'blur(4px)',
-        }}>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ background: 'linear-gradient(90deg, #232526 0%, #00c6ff 100%)' }}>
-                <TableCell sx={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>#</TableCell>
-                <TableCell sx={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>Tên danh mục</TableCell>
-                <TableCell sx={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>Trạng thái</TableCell>
-                <TableCell align="right" sx={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>Thao tác</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {categories.map((cat, idx) => (
-                <TableRow
-                  key={cat._id}
-                  sx={{
-                    transition: '0.2s',
-                    ':hover': { background: 'rgba(0,198,255,0.08)' },
-                  }}
-                >
-                  <TableCell sx={{ color: '#fff', fontWeight: 500 }}>{idx + 1}</TableCell>
-                  <TableCell sx={{ color: '#fff', fontWeight: 500 }}>{cat.name}</TableCell>
-                  <TableCell>
-                    <Switch
-                      checked={cat.status !== false}
-                      onChange={() => handleToggleStatus(cat)}
-                      color="success"
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <IconButton color="error" onClick={() => handleOpenDeleteModal(cat)}>
-                      <Delete />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {categories.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={3} align="center" sx={{ color: '#fff' }}>
-                    Không có danh mục nào.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
 
       {/* Add Category Modal */}
-      <Dialog open={openAddModal} onClose={handleCloseAddModal}>
-        <DialogTitle>Thêm danh mục mới</DialogTitle>
-        <DialogContent>
+      <Dialog 
+        open={openAddModal} 
+        onClose={handleCloseAddModal}
+        PaperProps={{
+          sx: {
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+            color: 'white',
+            borderRadius: 3,
+            border: '1px solid rgba(255, 107, 53, 0.3)',
+          }
+        }}
+      >
+        <DialogTitle sx={{
+          color: '#ff6b35',
+          fontWeight: 'bold',
+          fontSize: 20,
+          borderBottom: '1px solid rgba(255, 107, 53, 0.2)',
+        }}>
+          Thêm danh mục mới
+        </DialogTitle>
+        <DialogContent sx={{ pt: 3 }}>
           <TextField
             autoFocus
             margin="dense"
@@ -211,27 +473,188 @@ export default function AllCategory() {
             fullWidth
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                '& fieldset': {
+                  borderColor: 'rgba(255, 107, 53, 0.3)',
+                },
+                '&:hover fieldset': {
+                  borderColor: 'rgba(255, 107, 53, 0.5)',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#ff6b35',
+                },
+              },
+              '& .MuiInputBase-input': {
+                color: 'white',
+              },
+              '& .MuiInputLabel-root': {
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
+              '& .MuiInputLabel-root.Mui-focused': {
+                color: '#ff6b35',
+              },
+            }}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseAddModal}>Huỷ</Button>
-          <Button onClick={handleAddCategory} variant="contained" color="primary">
+        <DialogActions sx={{ p: 3 }}>
+          <Button 
+            onClick={handleCloseAddModal}
+            sx={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.1)',
+              },
+            }}
+          >
+            Hủy
+          </Button>
+          <Button 
+            onClick={handleAddCategory} 
+            variant="contained"
+            sx={{
+              background: 'linear-gradient(45deg, #ff6b35 0%, #f7931e 100%)',
+              '&:hover': {
+                background: 'linear-gradient(45deg, #f7931e 0%, #ff6b35 100%)',
+              },
+            }}
+          >
             Thêm
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Delete Category Modal */}
-      <Dialog open={openDeleteModal} onClose={handleCloseDeleteModal}>
-        <DialogTitle>Xác nhận xoá</DialogTitle>
-        <DialogContent>
-          Bạn có chắc muốn xoá danh mục 
-          {selectedCategory?.name}?
+      {/* Edit Category Modal */}
+      <Dialog 
+        open={openEditModal} 
+        onClose={handleCloseEditModal}
+        PaperProps={{
+          sx: {
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+            color: 'white',
+            borderRadius: 3,
+            border: '1px solid rgba(255, 107, 53, 0.3)',
+          }
+        }}
+      >
+        <DialogTitle sx={{
+          color: '#ff6b35',
+          fontWeight: 'bold',
+          fontSize: 20,
+          borderBottom: '1px solid rgba(255, 107, 53, 0.2)',
+        }}>
+          Sửa danh mục
+        </DialogTitle>
+        <DialogContent sx={{ pt: 3 }}>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Tên danh mục mới"
+            fullWidth
+            value={editCategoryName}
+            onChange={(e) => setEditCategoryName(e.target.value)}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                '& fieldset': {
+                  borderColor: 'rgba(255, 107, 53, 0.3)',
+                },
+                '&:hover fieldset': {
+                  borderColor: 'rgba(255, 107, 53, 0.5)',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#ff6b35',
+                },
+              },
+              '& .MuiInputBase-input': {
+                color: 'white',
+              },
+              '& .MuiInputLabel-root': {
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
+              '& .MuiInputLabel-root.Mui-focused': {
+                color: '#ff6b35',
+              },
+            }}
+          />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteModal}>Huỷ</Button>
-          <Button onClick={handleDeleteCategory} variant="contained" color="error">
-            Xoá
+        <DialogActions sx={{ p: 3 }}>
+          <Button 
+            onClick={handleCloseEditModal}
+            sx={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.1)',
+              },
+            }}
+          >
+            Hủy
+          </Button>
+          <Button 
+            onClick={handleEditCategory} 
+            variant="contained"
+            sx={{
+              background: 'linear-gradient(45deg, #ff6b35 0%, #f7931e 100%)',
+              '&:hover': {
+                background: 'linear-gradient(45deg, #f7931e 0%, #ff6b35 100%)',
+              },
+            }}
+          >
+            Lưu
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Category Modal */}
+      <Dialog 
+        open={openDeleteModal} 
+        onClose={handleCloseDeleteModal}
+        PaperProps={{
+          sx: {
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+            color: 'white',
+            borderRadius: 3,
+            border: '1px solid rgba(255, 107, 53, 0.3)',
+          }
+        }}
+      >
+        <DialogTitle sx={{
+          color: '#ff4757',
+          fontWeight: 'bold',
+          fontSize: 20,
+          borderBottom: '1px solid rgba(255, 71, 87, 0.2)',
+        }}>
+          Xác nhận xóa
+        </DialogTitle>
+        <DialogContent sx={{ pt: 3 }}>
+          <Typography sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+            Bạn có chắc muốn xóa danh mục {selectedCategory?.name}?
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button 
+            onClick={handleCloseDeleteModal}
+            sx={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.1)',
+              },
+            }}
+          >
+            Hủy
+          </Button>
+          <Button 
+            onClick={handleDeleteCategory} 
+            variant="contained"
+            sx={{
+              background: 'linear-gradient(45deg, #ff4757 0%, #ff3742 100%)',
+              '&:hover': {
+                background: 'linear-gradient(45deg, #ff3742 0%, #ff4757 100%)',
+              },
+            }}
+          >
+            Xóa
           </Button>
         </DialogActions>
       </Dialog>
@@ -243,13 +666,37 @@ export default function AllCategory() {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={snackbar.severity} 
+          sx={{ 
+            width: "100%",
+            background: snackbar.severity === 'success' 
+              ? 'linear-gradient(45deg, #4caf50 0%, #45a049 100%)'
+              : 'linear-gradient(45deg, #f44336 0%, #d32f2f 100%)',
+            color: 'white',
+            '& .MuiAlert-icon': {
+              color: 'white',
+            },
+          }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>
+
       {/* Error message */}
       {error && (
-        <Alert severity="error" sx={{ mt: 2 }}>
+        <Alert 
+          severity="error" 
+          sx={{ 
+            mt: 2,
+            background: 'linear-gradient(45deg, #f44336 0%, #d32f2f 100%)',
+            color: 'white',
+            '& .MuiAlert-icon': {
+              color: 'white',
+            },
+          }}
+        >
           {error}
         </Alert>
       )}

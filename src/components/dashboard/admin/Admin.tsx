@@ -25,7 +25,6 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Technology from "@/components/nav/Technology";
-import Transection from "../user/dashboard/Transection";
 import { Category } from "@mui/icons-material";
 
 const drawerWidth = 300;
@@ -256,7 +255,6 @@ export default function User({ children }: { children?: React.ReactNode }) {
             </Drawer>
            <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>
            <Technology />  
-          <Transection />
           {children}
         </Box>
         </Box>

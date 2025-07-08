@@ -23,7 +23,7 @@ export const fetchCategories = createAsyncThunk<Category[], void, { rejectValue:
   'categories/fetchCategories',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${process.env.API}/user/category`);
+      const response = await fetch(`${process.env.API}/admin/category`);
       if (!response.ok) {
         return rejectWithValue('Không thể lấy danh mục');
       }
@@ -40,7 +40,7 @@ export const addCategory = createAsyncThunk<Category, { name: string }, { reject
   'categories/addCategory',
   async (newCategory, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${process.env.API}/user/category`, {
+      const response = await fetch(`${process.env.API}/admin/category`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export const deleteCategory = createAsyncThunk<string, string, { rejectValue: st
   'categories/deleteCategory',
   async (categoryId, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${process.env.API}/user/category/${categoryId}`, {
+      const response = await fetch(`${process.env.API}/admin/category/${categoryId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ export const updateCategory = createAsyncThunk<Category, Category, { rejectValue
   'categories/updateCategory',
   async (updateCategory, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${process.env.API}/user/category/${updateCategory._id}`, {
+      const response = await fetch(`${process.env.API}/admin/category/${updateCategory._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

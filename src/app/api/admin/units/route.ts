@@ -18,11 +18,11 @@ export async function POST(req: Request) {
     await dbConnect();
     const body = await req.json()
 
-    const {name} = body
+    const {name,symbol} = body
     
 
     try {
-        const unit = await Units.create({name})
+        const unit = await Units.create({name,symbol})
         return NextResponse.json(unit)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

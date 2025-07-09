@@ -25,7 +25,7 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Technology from "@/components/nav/Technology";
-import { Category } from "@mui/icons-material";
+import { Category, StraightenOutlined } from "@mui/icons-material";
 
 const drawerWidth = 300;
 
@@ -110,6 +110,11 @@ export default function User({ children }: { children?: React.ReactNode }) {
     const handleNavigation=(path: any)=> {
         router.push(`/dashboard/admin/${path}`)
     }
+    const [isCollapseSessions, setIsCollapseSections] = React.useState(false);
+    const handleCollapseseSessions = () => {
+        setIsCollapseSections(!isCollapseSessions);
+    }
+    
     return (
         <Box sx={{ display: "flex", minHeight: "100vh", background: "#f5f6fa" }}>
             <CssBaseline />
@@ -251,6 +256,53 @@ export default function User({ children }: { children?: React.ReactNode }) {
                     </ListItem>
                    ))}
                    </Collapse>
+
+                   {/*start allunit */}
+                     <ListItem disablePadding 
+                   sx={{ display: "block"}} onClick={handleCollapseseSessions}>
+                    <ListItemButton
+                    sx={{
+                        minHeight: 50,
+                        justifyContent: open ? "initial" : "center",
+                        px: 3,
+                    }}>
+                    <ListItemIcon
+                    sx={{minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                    }}>
+                    <StraightenOutlined sx={{ color: "white"}}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Quản Lý Đơn Vị" sx={{opacity: 1}}>
+                     {isCollapseSessions ? <ExpandLess/> : <ExpandMore/>}
+                    </ListItemText>
+                    {/* end category */}
+                    </ListItemButton>
+                   </ListItem>
+                   <Collapse in={isCollapseSessions} timeout="auto" unmountOnExit>
+                   {["all-units"].map((text) => (
+                    <ListItem key={text} disablePadding sx={{display: "block"}}>
+                    <ListItemButton
+                    onClick={() => handleNavigation(text)}
+                    sx={{
+                        minHeight: 50,
+                        justifyContent: open ? "initial" : "center",
+                        px: 3,
+                        marginLeft: "30px",
+                        color: "white",
+                        borderBottom: "1px solid white",
+                    }}>
+                     <ListItemText
+                     primary={text.replace(/-/g," ")}
+                     sx={{ opacity: open ? 1 : 0}}>
+                     </ListItemText>
+                    </ListItemButton>
+                    </ListItem>
+                   ))}
+                   </Collapse>
+
+
+                   {/* end allunit  */}
                 </List>
             </Drawer>
            <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>

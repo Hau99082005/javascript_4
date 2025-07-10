@@ -21,14 +21,14 @@ export default function AllCategory() {
   const dispatch = useDispatch<AppDispatch>();
   const { categories, loading, error } = useSelector((state: RootState) => state.categories);
 
-  const [openAddModal, setOpenAddModal] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState("");
+    const [openAddModal, setOpenAddModal] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState("");
   const [filter, setFilter] = useState("");
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<{ _id: string; name: string } | null>(null);
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: "",
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
     severity: "success" as "success" | "error",
   });
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -36,7 +36,7 @@ export default function AllCategory() {
   const [editCategory, setEditCategory] = useState<any>(null);
   const [editCategoryName, setEditCategoryName] = useState("");
 
-  useEffect(() => {
+    useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
@@ -99,7 +99,7 @@ export default function AllCategory() {
         setSnackbar({ open: true, message: "Cập nhật danh mục thành công!", severity: "success" });
         setOpenEditModal(false);
       })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .catch((error: any) => {
         setSnackbar({ open: true, message: `Lỗi: ${error}`, severity: "error" });
       });
@@ -630,7 +630,7 @@ export default function AllCategory() {
         <DialogContent sx={{ pt: 3 }}>
           <Typography sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
             Bạn có chắc muốn xóa danh mục {selectedCategory?.name}?
-          </Typography>
+        </Typography>
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
           <Button 
@@ -700,6 +700,6 @@ export default function AllCategory() {
           {error}
         </Alert>
       )}
-    </Box>
-  );
+     </Box>
+    );
 }

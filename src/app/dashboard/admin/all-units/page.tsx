@@ -1,11 +1,13 @@
 "use client";
 
+import AllUnits from "@/components/allunits/AllUnits";
+
 
 
 export default function Page() {
     return(
         <>
-        <h1>All Units</h1>
+        <AllUnits/>
         </>
     )
 }

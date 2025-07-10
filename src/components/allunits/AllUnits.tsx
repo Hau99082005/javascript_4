@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addUnit, fetchUnits, deleteUnit, Unit, updateUnit } from "@/reduxslice/UnitsSlice";
 import { AppDispatch } from "@/app/store";
 
-export default function AllUnits() {
+export default function AllUnits() {  
   const dispatch = useDispatch<AppDispatch>();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { units, loading, error } = useSelector((state: any) => state.units);
@@ -97,6 +97,7 @@ export default function AllUnits() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .catch((error: any) => {
         setSnackbar({ open: true, message: `Lỗi: ${error}`, severity: "error" });
+        console.log("Xoá đơn vị thất bại", selectedUnit, error);
       });
   };
 

@@ -27,6 +27,7 @@ export async function DELETE(req: Request,  context: { params: { id: any; }; }) 
     const params = await context.params;
     try {
     const deletingUnits = await Units.findByIdAndDelete(params.id)
+    console.log("Xoá đơn vị",deletingUnits);
     return NextResponse.json(deletingUnits)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }catch(error: any) {

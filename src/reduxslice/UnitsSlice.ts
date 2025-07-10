@@ -87,7 +87,9 @@ export const updateUnit = createAsyncThunk(
       }
       const data = await response.json();
       return data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      console.log("error", error);
       return rejectWithValue(error.message || "Đã có sự cố xảy ra!");
     }
   }

@@ -1,67 +1,36 @@
+import { NextResponse } from "next/server";
 import dbConnect from "@/utils/dbConnect";
 import Supplier from "@/model/supplier";
 
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*", // Đổi * thành domain FE nếu cần bảo mật
-  "Access-Control-Allow-Methods": "PUT,DELETE,OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function PUT(req: Request, context: { params: Promise<{ id: any; }>; }) {
+    await dbConnect();
+    const body = await req.json();
 
-export async function OPTIONS() {
-  return new Response(null, {
-    status: 204,
-    headers: CORS_HEADERS,
-  });
+    try {
+     const updatingSupplier=await Supplier.findByIdAndUpdate(
+         (await context.params).id,
+         {...body},
+         {new: true},
+     )
+     return NextResponse.json({updatingSupplier})
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }catch(error: any) {
+       return NextResponse.json({err: error.message}, {status: 500})
+    }
+
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  await dbConnect();
-  const body = await req.json();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function DELETE(req: Request, context: { params: Promise<{ id: any; }>; }) {
+     await dbConnect();
+     try {
+        const deletingSupplier = await Supplier.findByIdAndDelete(
+            (await context.params).id,)
+      return NextResponse.json(deletingSupplier);
 
-  try {
-    const updatingSupplier = await Supplier.findByIdAndUpdate(
-      params.id,
-      { ...body },
-      { new: true }
-    );
-    return new Response(JSON.stringify({ updatingSupplier }), {
-      status: 200,
-      headers: {
-        ...CORS_HEADERS,
-        "Content-Type": "application/json",
-      },
-    });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return new Response(JSON.stringify({ err: error.message }), {
-      status: 500,
-      headers: {
-        ...CORS_HEADERS,
-        "Content-Type": "application/json",
-      },
-    });
-  }
-}
-
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-  await dbConnect();
-  try {
-    const deletingSupplier = await Supplier.findByIdAndDelete(params.id);
-    return new Response(JSON.stringify(deletingSupplier), {
-      status: 200,
-      headers: {
-        ...CORS_HEADERS,
-        "Content-Type": "application/json",
-      },
-    });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return new Response(JSON.stringify({ err: error.message }), {
-      status: 500,
-      headers: {
-        ...CORS_HEADERS,
-        "Content-Type": "application/json",
-      },
-    });
-  }
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     }catch(error: any) {
+      return NextResponse.json({err: error.message}, {status: 500})
+     }
 }

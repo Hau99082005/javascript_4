@@ -5,7 +5,7 @@ import dbConnect from "./dbConnect";
 
 export const authOptions = {
     session: {
-        strategy: 'jwt',
+        strategy: 'jwt' as const,
     },
     providers: [
     CredentialsProvider({
@@ -61,6 +61,6 @@ export const authOptions = {
    },
    secret: process.env.NEXTAUTH_SECRET, 
 pages: {
-    signin: '/login'
+    signIn: '/login'
 }
 }

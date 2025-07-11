@@ -5,7 +5,9 @@ import { Dashboard, Inventory, Add, ListAlt, ShoppingCart, Assessment, People, S
 import { styled } from '@mui/system';
 import { motion } from "framer-motion";
 import Typography from "@mui/material/Typography";
-import { Grid, Card , Box} from "@mui/material";
+// Dùng GridLegacy thay vì Grid để tránh lỗi prop 'item' với MUI v7
+import { GridLegacy as Grid } from "@mui/material";
+import { Card, Box } from "@mui/material";
 import CardActionArea from "@mui/material/CardActionArea";
 import ImageIcon from '@mui/icons-material/Image';
 

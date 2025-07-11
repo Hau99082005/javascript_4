@@ -4,7 +4,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": true,                 // ⚠️ Tắt strict để bỏ check nghiêm ngặt
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -12,7 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-      "baseUrl": ".",
+    "baseUrl": ".",
     "incremental": true,
     "plugins": [
       {

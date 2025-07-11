@@ -5,8 +5,8 @@ import type { NextRequest } from "next/server";
 function customMiddleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Xử lý CORS cho tất cả route /api/*
-  if (pathname.startsWith("/api/")) {
+  // Nếu là preflight OPTIONS cho /api/, trả về header CORS luôn
+  if (pathname.startsWith("/api/") && req.method === "OPTIONS") {
     const response = NextResponse.next();
     response.headers.set("Access-Control-Allow-Origin", "*");
     response.headers.set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
@@ -14,7 +14,14 @@ function customMiddleware(req: NextRequest) {
     return response;
   }
 
-  // Chỉ truy cập req.nextauth cho các route cần xác thực (sau khi đã loại trừ /api/*)
+  // Nếu là các request khác tới /api/, chỉ set header CORS
+  if (pathname.startsWith("/api/")) {
+    const response = NextResponse.next();
+    response.headers.set("Access-Control-Allow-Origin", "*");
+    return response;
+  }
+
+  // Các route cần xác thực
   // @ts-ignore
   const userRole = req.nextauth?.token?.role;
 

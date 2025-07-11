@@ -5,22 +5,6 @@ import type { NextRequest } from "next/server";
 function customMiddleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Nếu là preflight OPTIONS cho /api/, trả về header CORS luôn
-  if (pathname.startsWith("/api/") && req.method === "OPTIONS") {
-    const response = NextResponse.next();
-    response.headers.set("Access-Control-Allow-Origin", "*");
-    response.headers.set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-    response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    return response;
-  }
-
-  // Nếu là các request khác tới /api/, chỉ set header CORS
-  if (pathname.startsWith("/api/")) {
-    const response = NextResponse.next();
-    response.headers.set("Access-Control-Allow-Origin", "*");
-    return response;
-  }
-
   // Các route cần xác thực
   // @ts-ignore
   const userRole = req.nextauth?.token?.role;
@@ -52,7 +36,7 @@ export const config = {
   matcher: [
     "/dashboard/admin/:path*",
     "/dashboard/user/:path*",
-    "/user/:path*",
-    "/api/:path*",
+    "/user/:path*"
+    // KHÔNG áp dụng cho /api/:path*
   ],
 };

@@ -93,7 +93,11 @@ export default function User({ children }: { children?: React.ReactNode }) {
     const router = useRouter();
     const [menuOpen, setMenuOpen] = React.useState(false);
     const [isCollapse, setIsCollapse] = React.useState(false);
+    const [isCollapseSupplier, setIsCollapseSupplier] = React.useState(false);
 
+    const handleCollapseseSupplier=()=> {
+        setIsCollapseSupplier(!isCollapseSupplier);
+    }
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -300,8 +304,50 @@ export default function User({ children }: { children?: React.ReactNode }) {
                     </ListItem>
                    ))}
                    </Collapse>
+                   {/* start supplier */}
+                    <ListItem disablePadding 
+                   sx={{ display: "block"}} onClick={handleCollapseseSupplier}>
+                    <ListItemButton
+                    sx={{
+                        minHeight: 50,
+                        justifyContent: open ? "initial" : "center",
+                        px: 3,
+                    }}>
+                    <ListItemIcon
+                    sx={{minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                    }}>
+                    <StraightenOutlined sx={{ color: "white"}}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Nhà cung cấp" sx={{opacity: 1}}>
+                     {isCollapseSupplier ? <ExpandLess/> : <ExpandMore/>}
+                    </ListItemText>
+                    {/* end supplier */}
+                    </ListItemButton>
+                   </ListItem>
 
-
+                     <Collapse in={isCollapseSupplier} timeout="auto" unmountOnExit>
+                   {["all-supplier"].map((text) => (
+                    <ListItem key={text} disablePadding sx={{display: "block"}}>
+                    <ListItemButton
+                    onClick={() => handleNavigation(text)}
+                    sx={{
+                        minHeight: 50,
+                        justifyContent: open ? "initial" : "center",
+                        px: 3,
+                        marginLeft: "30px",
+                        color: "white",
+                        borderBottom: "1px solid white",
+                    }}>
+                     <ListItemText
+                     primary={text.replace(/-/g," ")}
+                     sx={{ opacity: open ? 1 : 0}}>
+                     </ListItemText>
+                    </ListItemButton>
+                    </ListItem>
+                   ))}
+                   </Collapse>
                    {/* end allunit  */}
                 </List>
             </Drawer>

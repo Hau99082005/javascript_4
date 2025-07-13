@@ -7,7 +7,16 @@ const nextConfig: NextConfig = {
     API,
     NEXTAUTH_SECRET,
     GOOGLE_API_KEY
-  }
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig; 

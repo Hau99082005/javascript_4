@@ -58,8 +58,7 @@ const electronicPages = [
 
 export default function HomeClient() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
-  const route = useRouter();
-  const [isAnnual, setIsAnnual] = useState(false);
+  // Đã xoá route, isAnnual, setIsAnnual vì không dùng
 
   return (
     <Box sx={{ background: '#f5f7fa', minHeight: '100vh', width: '100%' }}>

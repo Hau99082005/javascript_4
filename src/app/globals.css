@@ -1,8 +1,14 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
+  --main-red: #d70018;
+  --main-yellow: #ffd600;
+  --main-bg: #f5f7fa;
+  --main-shadow: 0 4px 16px rgba(215,0,24,0.10);
+  --main-radius: 18px;
   --background: #f5f7fa;
   --foreground: #222;
   --primary: #005baa;
@@ -60,7 +66,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
   min-height: 100vh;

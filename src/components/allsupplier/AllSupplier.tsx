@@ -240,6 +240,7 @@ export default function AllSupplier() {
       } else {
         setSnackbar({ open: true, message: "Lỗi upload ảnh. Vui lòng thử lại.", severity: "error" });
         setLogoPreview("");
+        setForm((prev) => ({ ...prev, logoUrl: "" })); // reset logoUrl nếu upload lỗi
       }
       setUploading(false);
     } catch (err: any) {
@@ -471,23 +472,21 @@ export default function AllSupplier() {
                       </Box>
                     </TableCell>
                     <TableCell>
-                      {supplier.logoUrl && (
-                        <Image
-                          src={supplier.logoUrl} 
-                          alt="Logo" 
-                          width={40} 
-                          height={40}
-                          style={{ 
-                            width: 40, 
-                            height: 40, 
-                            objectFit: 'cover',
-                            borderRadius: '8px'
-                          }}
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                          }}
-                        />
-                      )}
+                      <Image
+                        src={supplier.logoUrl || "/images/fallback-logo.png"}
+                        alt="Logo"
+                        width={40}
+                        height={40}
+                        style={{
+                          width: 40,
+                          height: 40,
+                          objectFit: 'cover',
+                          borderRadius: '8px'
+                        }}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "/images/fallback-logo.png";
+                        }}
+                      />
                     </TableCell>
                     <TableCell>{supplier.note}</TableCell>
                     <TableCell>

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Box, Fab, Modal, Fade, IconButton } from '@mui/material';
 import { useState } from 'react';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import PeopleIcon from '@mui/icons-material/People';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
 import LaptopMacIcon from '@mui/icons-material/LaptopMac';
 import HeadphonesIcon from '@mui/icons-material/Headphones';
@@ -41,7 +41,6 @@ export default function HomeClient() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const route = useRouter();
-   
 
   return (
     <Box sx={{ background: '#f5f7fa', minHeight: '100vh', width: '100%' }}>
@@ -65,7 +64,7 @@ export default function HomeClient() {
             <SearchIcon style={{ color: '#d70018', fontSize: 24, marginRight: 8 }} />
             <input className={styles.searchInput} placeholder="Nhập tên điện thoại, máy tính, phụ kiện... cần tìm" />
           </div>
-          <PeopleIcon className={styles.cartIcon} />
+          <AccountCircleIcon className={styles.cartIcon} />
           <ShoppingCartIcon className={styles.cartIcon} />
         </div>
       </div>

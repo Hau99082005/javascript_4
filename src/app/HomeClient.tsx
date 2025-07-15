@@ -2,15 +2,8 @@
 import * as React from 'react';
 import { Box, Fab, Modal, Fade, IconButton } from '@mui/material';
 import { useState } from 'react';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import CategoryIcon from '@mui/icons-material/Category';
-import AddIcon from '@mui/icons-material/Add';
-import AssessmentIcon from '@mui/icons-material/Assessment';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
-import SettingsIcon from '@mui/icons-material/Settings';
-import BarChartIcon from '@mui/icons-material/BarChart';
 import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
 import LaptopMacIcon from '@mui/icons-material/LaptopMac';
 import HeadphonesIcon from '@mui/icons-material/Headphones';
@@ -26,23 +19,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 import Technology from '@/components/nav/Technology';
 import AiAssistantBox from '@/components/ai/AiAssistantBox';
-// import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import styles from './HomeClient.module.css';
-import Image from 'next/image';
 import MenuIcon from '@mui/icons-material/Menu';
 
-const pages = [
-  {name: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard'},
-  {name: 'Products', icon: <InventoryIcon />, path: '/products'},
-  {name: 'categories', icon: <CategoryIcon />, path: '/category'},
-  {name: 'Add Products', icon: <AddIcon />, path: '/add-products'},
-  {name: 'Inventory', icon: <InventoryIcon />, path: '/inventory'},
-  {name: 'Orders', icon: <ShoppingCartIcon />, path: '/orders'},
-  {name: 'Reports', icon: <AssessmentIcon />, path: '/reports'},
-  {name: 'Customers', icon: <PeopleIcon />, path: '/customers'},
-  {name: 'Settings', icon: <SettingsIcon />, path: '/settings'},
-  {name: 'Analytics', icon: <BarChartIcon />, path: '/analytics'},
-];
 
 const electronicPages = [
   { name: 'Điện thoại', icon: <PhoneIphoneIcon fontSize="large" />, path: '/products/phones' },
@@ -60,7 +40,8 @@ const electronicPages = [
 export default function HomeClient() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  // Đã xoá route, isAnnual, setIsAnnual vì không dùng
+  const route = useRouter();
+   
 
   return (
     <Box sx={{ background: '#f5f7fa', minHeight: '100vh', width: '100%' }}>
@@ -110,10 +91,7 @@ export default function HomeClient() {
         <div className={styles.bannerText}>
           <div className={styles.bannerTitle}>Đón đầu 5G<br />Lên Đời Galaxy <span style={{ color: '#1976d2', background: '#e3f0ff', borderRadius: 6, padding: '2px 10px', fontWeight: 800, fontSize: '1.2em' }}>Mới</span></div>
           <div className={styles.bannerDesc}>Ưu đãi cực sốc, đổi máy mới, trả góp 0%!</div>
-          <button className={styles.bannerButton}>MUA NGAY</button>
-        </div>
-        <div className={styles.bannerImg}>
-          <Image width={100} height={100} src="/images/banner.webp" alt="banner" style={{ maxHeight: 220, borderRadius: 18 }} />
+          <button onClick={() => route.push('/login')} className={styles.bannerButton}>MUA NGAY</button>
         </div>
       </div>
       {/* Khối quảng cáo/ưu đãi */}
@@ -134,16 +112,6 @@ export default function HomeClient() {
       {/* Danh mục sản phẩm nổi bật */}
       <div className={styles.categoryGrid}>
         {electronicPages.map((page, index) => (
-          <div className={styles.categoryCard} key={index}>
-            <div style={{ fontSize: 48, marginBottom: 8 }}>{page.icon}</div>
-            <div style={{ fontWeight: 700, marginBottom: 4 }}>{page.name}</div>
-            <div style={{ color: '#d70018', fontWeight: 500, fontSize: 14 }}>Đi tới {page.name}</div>
-          </div>
-        ))}
-      </div>
-      {/* Bảng điều khiển quản trị */}
-      <div className={styles.categoryGrid} style={{ marginTop: 36 }}>
-        {pages.map((page, index) => (
           <div className={styles.categoryCard} key={index}>
             <div style={{ fontSize: 48, marginBottom: 8 }}>{page.icon}</div>
             <div style={{ fontWeight: 700, marginBottom: 4 }}>{page.name}</div>

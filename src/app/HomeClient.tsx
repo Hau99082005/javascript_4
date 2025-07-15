@@ -26,9 +26,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 import Technology from '@/components/nav/Technology';
 import AiAssistantBox from '@/components/ai/AiAssistantBox';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import styles from './HomeClient.module.css';
 import Image from 'next/image';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const pages = [
   {name: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard'},
@@ -58,6 +59,7 @@ const electronicPages = [
 
 export default function HomeClient() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   // Đã xoá route, isAnnual, setIsAnnual vì không dùng
 
   return (
@@ -67,6 +69,10 @@ export default function HomeClient() {
         <div className={styles.logoBox}>
           <Technology/>
         </div>
+        {/* Hamburger menu cho mobile - luôn hiển thị trên mobile */}
+        <button className={styles.hamburger + (mobileNavOpen ? ' ' + styles.hamburgerActive : '')} onClick={() => setMobileNavOpen(true)} aria-label="Mở menu">
+          <MenuIcon className={styles.hamburgerIcon} />
+        </button>
         <nav className={styles.nav}>
           <div className={styles.navItem}>Danh mục</div>
           <div className={styles.navItem}>Khuyến mãi</div>
@@ -82,6 +88,23 @@ export default function HomeClient() {
           <ShoppingCartIcon className={styles.cartIcon} />
         </div>
       </div>
+      {/* Mobile nav overlay */}
+      {mobileNavOpen && (
+        <div className={styles.mobileNavOverlay} onClick={() => setMobileNavOpen(false)}>
+          <div className={styles.mobileNavMenu} onClick={e => e.stopPropagation()}>
+            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:24}}>
+              <Technology />
+              <button className={styles.closeMenuBtn} onClick={() => setMobileNavOpen(false)} aria-label="Đóng menu">
+                <CloseIcon fontSize="inherit" />
+              </button>
+            </div>
+            <div className={styles.mobileNavItem}>Danh mục</div>
+            <div className={styles.mobileNavItem}>Khuyến mãi</div>
+            <div className={styles.mobileNavItem}>Sản phẩm</div>
+            <div className={styles.mobileNavItem}>Tin tức</div>
+          </div>
+        </div>
+      )}
       {/* Banner lớn */}
       <div className={styles.banner}>
         <div className={styles.bannerText}>

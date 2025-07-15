@@ -4,11 +4,14 @@
   display: flex;
   align-items: center;
   padding: 0 32px;
-  height: 88px;
-  box-shadow: 0 2px 12px #d7001815;
+  height: 104px;
+  box-shadow: 0 4px 24px #d7001830;
   position: sticky;
   top: 0;
   z-index: 100;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  transition: box-shadow 0.2s, border-radius 0.2s, height 0.2s;
 }
 .logoBox {
   display: flex;
@@ -217,6 +220,88 @@
 .bold {
   font-weight: 700;
 }
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 8px;
+  margin-left: 8px;
+  z-index: 201;
+}
+.hamburgerIcon {
+  width: 28px;
+  height: 28px;
+  display: block;
+  color: #fff;
+  transition: color 0.2s;
+}
+.hamburgerActive .hamburgerIcon {
+  color: #ffd600;
+}
+.mobileNavOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.32);
+  z-index: 200;
+  display: flex;
+  justify-content: flex-end;
+  transition: opacity 0.3s;
+}
+.mobileNavMenu {
+  width: 80vw;
+  max-width: 340px;
+  height: 100vh;
+  background: linear-gradient(135deg, #ff3c00 0%, #ff9800 100%);
+  box-shadow: -4px 0 32px #d7001840;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 18px 18px 18px;
+  position: relative;
+  border-top-left-radius: 32px;
+  border-bottom-left-radius: 32px;
+  animation: slideInRight 0.3s;
+}
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.closeMenuBtn {
+  color: #fff;
+  font-size: 2.2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.closeMenuBtn:hover {
+  color: #ffd600;
+}
+.mobileNavItem {
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.35rem;
+  padding: 20px 0 20px 12px;
+  border-bottom: 1.5px solid #ffd60033;
+  cursor: pointer;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px #ff980022;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.mobileNavItem:last-child {
+  border-bottom: none;
+}
+.mobileNavItem:hover {
+  background: #ffd60033;
+  color: #d70018;
+  transform: scale(1.04);
+  box-shadow: 0 6px 24px #ffd60033;
+}
 
 /* Responsive styles */
 @media (max-width: 1200px) {
@@ -228,8 +313,18 @@
   }
 }
 @media (max-width: 900px) {
-  .header { flex-wrap: wrap; height: auto; padding: 0 8px; }
-  .logoBox { font-size: 1.3rem; margin-right: 12px; }
+  .header {
+    height: 80px;
+    padding: 0 8px;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    box-shadow: 0 6px 32px #d7001840;
+  }
+  .logoBox {
+    font-size: 1.2rem;
+    margin-right: 8px;
+    height: 2.8rem;
+  }
   .nav { gap: 12px; }
   .searchBar { min-width: 160px; }
   .banner {
@@ -271,16 +366,26 @@
     font-size: 1rem;
     padding: 6px 10px;
   }
+  .nav {
+    display: none;
+  }
+  .hamburger {
+    display: block;
+    margin-left: 0;
+    padding: 8px 10px;
+  }
+  .hamburgerIcon {
+    width: 34px;
+    height: 34px;
+  }
 }
 @media (max-width: 600px) {
   .header {
-    flex-wrap: wrap;
-    height: auto;
+    height: 72px;
     padding: 0 4px;
   }
-  .logo {
-    height: 28px;
-    margin-right: 6px;
+  .logoBox {
+    height: 2.2rem;
   }
   .nav {
     display: none;
@@ -348,5 +453,74 @@
     padding: 12px 0 8px 0;
     min-height: 70px;
     font-size: 0.95rem;
+  }
+}
+@media (max-width: 400px) {
+  .header {
+    flex-direction: column;
+    height: auto;
+    padding: 0 2px;
+  }
+  .logoBox {
+    font-size: 1rem;
+    margin-right: 2px;
+    height: 2.2rem;
+  }
+  .searchBar {
+    min-width: unset;
+    width: 98vw;
+    padding: 0 2px;
+    font-size: 0.95rem;
+  }
+  .cartIcon {
+    font-size: 1.1rem !important;
+    margin-left: 4px;
+  }
+  .banner {
+    margin: 8px auto 0 auto;
+    border-radius: 8px;
+    padding: 0;
+  }
+  .bannerText {
+    padding: 8px 2px 2px 2px;
+    font-size: 0.95rem;
+  }
+  .bannerTitle {
+    font-size: 1rem;
+  }
+  .bannerDesc {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+  .bannerButton {
+    font-size: 0.95rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+  }
+  .bannerImg {
+    padding: 0 1px 4px 1px;
+  }
+  .promoGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .promoCard {
+    padding: 8px 4px;
+    min-height: 60px;
+    font-size: 0.9rem;
+  }
+  .promoTitle {
+    font-size: 0.95rem;
+  }
+  .categoryGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .categoryCard {
+    padding: 6px 0 4px 0;
+    min-height: 40px;
+    font-size: 0.9rem;
   }
 } 

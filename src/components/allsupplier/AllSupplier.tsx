@@ -29,7 +29,7 @@ import {
 } from "@mui/material";
 import { Add, Delete, Edit, Search } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { addSupplier, fetchSuppliers, Supplier, deleteSupplier, updateSupplier } from "@/reduxslice/supplierSlice";
+import { addSupplier, fetchSuppliers, Supplier, deleteSupplier, updateSupplier } from "../../reduxslice/supplierSlice";
 import { AppDispatch } from "@/app/store";
 import FallbackImage from "./FallbackImage";
 

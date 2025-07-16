@@ -13,7 +13,7 @@ import ImageIcon from '@mui/icons-material/Image';
 
 const pages = [
   { name: 'Dashboard', icon: <Dashboard fontSize="large" />, path: '/dashboard' },
-  {name: 'Categories', icon: <Category fontSize="large"/>, path: '/categories'},
+  {name: 'Categories', icon: <Category fontSize="large"/>, path: '/dashboard/admin/all-category'},
   { name: 'Products', icon: <Inventory fontSize="large" />, path: '/products' },
   { name: 'Add Product', icon: <Add fontSize="large" />, path: '/add-product' },
   {name: 'Banner', icon: <ImageIcon fontSize="large"/>, path: '/banner'},

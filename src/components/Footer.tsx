@@ -1,6 +1,7 @@
 import React from 'react';
 import EmailIcon from '@mui/icons-material/Email';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import Link from 'next/link';
 
 export default function Footer() {
   return (
@@ -25,9 +26,9 @@ export default function Footer() {
         <div style={{ fontSize: 15, marginBottom: 8, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           <EmailIcon style={{ verticalAlign: 'middle', color: '#fff', fontSize: 20, marginRight: 4 }} />
           <span>Liên hệ: </span>
-          <a href="mailto:hau99082005@gmail.com" style={{ color: '#fff', fontWeight: 700, textDecoration: 'underline', fontSize: 15, letterSpacing: 0.5 }}>
+          <Link href="mailto:hau99082005@gmail.com" style={{ color: '#fff', fontWeight: 700, textDecoration: 'none', fontSize: 15, letterSpacing: 0.5 }}>
             hau99082005@gmail.com
-          </a>
+          </Link>
         </div>
         <div style={{ fontSize: 14, opacity: 0.92, marginBottom: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
           <FavoriteIcon style={{ color: '#fff', fontSize: 18, marginRight: 2 }} />

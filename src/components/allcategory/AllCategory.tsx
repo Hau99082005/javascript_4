@@ -120,7 +120,8 @@ export default function AllCategory() {
       });
   };
 
-  const filteredCategories = (categories ?? []).filter((category) =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const filteredCategories = (categories ?? []).filter((category: { name: any; }) =>
     (category?.name ?? '').toLowerCase().includes(filter.toLowerCase())
   );
 

@@ -39,49 +39,58 @@ const electronicPages = [
 
 export default function HomeClient() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
+  // const [categoryMenuOpen, setCategoryMenuOpen] = useState(false); // Xóa dropdown nhỏ
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const route = useRouter();
+  // Đóng dropdown khi click ngoài
+  React.useEffect(() => {
+    if (!mobileNavOpen) return;
+    const handle = (e: MouseEvent) => {
+      const menu = document.getElementById('categoryDropdown');
+      if (menu && !menu.contains(e.target as Node)) setMobileNavOpen(false);
+    };
+    document.addEventListener('mousedown', handle);
+    return () => document.removeEventListener('mousedown', handle);
+  }, [mobileNavOpen]);
 
   return (
     <Box sx={{ background: '#f5f7fa', minHeight: '100vh', width: '100%' }}>
       {/* Header FPTShop style */}
-      <div className={styles.header}>
+      <div className={styles.headerFpt}>
         <div className={styles.logoBox}>
-          <Technology/>
+          <Technology />
         </div>
-        {/* Hamburger menu cho mobile - luôn hiển thị trên mobile */}
-        <button className={styles.hamburger + (mobileNavOpen ? ' ' + styles.hamburgerActive : '')} onClick={() => setMobileNavOpen(true)} aria-label="Mở menu">
-          <MenuIcon className={styles.hamburgerIcon} />
+        <button className={styles.menuBtn} onClick={() => setMobileNavOpen(true)}>
+          <MenuIcon />
+          <span>Danh mục</span>
         </button>
-        <nav className={styles.nav}>
-          <div className={styles.navItem}>Danh mục</div>
-          <div className={styles.navItem}>Khuyến mãi</div>
-          <div className={styles.navItem}>Sản phẩm</div>
-          <div className={styles.navItem}>Tin tức</div>
-        </nav>
-        <div className={styles.rightBox}>
-          <div className={styles.searchBar}>
-            <SearchIcon style={{ color: '#d70018', fontSize: 24, marginRight: 8 }} />
-            <input className={styles.searchInput} placeholder="Nhập tên điện thoại, máy tính, phụ kiện... cần tìm" />
-          </div>
-          <AccountCircleIcon className={styles.cartIcon} onClick={() => route.push('/login')} />
-          <ShoppingCartIcon className={styles.cartIcon} />
+        <div className={styles.searchWrap}>
+          <SearchIcon className={styles.searchIcon} />
+          <input className={styles.searchInput} placeholder="Nhập tên điện thoại, máy tính, phụ kiện... cần tìm" />
+        </div>
+        <div className={styles.headerActions}>
+          <IconButton className={styles.actionBtn}><AccountCircleIcon /></IconButton>
+          <IconButton className={styles.actionBtn}><ShoppingCartIcon /></IconButton>
         </div>
       </div>
-      {/* Mobile nav overlay */}
+      {/* Sidebar danh mục cho cả desktop & mobile */}
       {mobileNavOpen && (
-        <div className={styles.mobileNavOverlay} onClick={() => setMobileNavOpen(false)}>
-          <div className={styles.mobileNavMenu} onClick={e => e.stopPropagation()}>
+        <div className={styles.categorySidebarOverlay} onClick={() => setMobileNavOpen(false)}>
+          <div className={styles.categorySidebar} onClick={e => e.stopPropagation()}>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:24}}>
               <Technology />
               <button className={styles.closeMenuBtn} onClick={() => setMobileNavOpen(false)} aria-label="Đóng menu">
                 <CloseIcon fontSize="inherit" />
               </button>
             </div>
-            <div className={styles.mobileNavItem}>Danh mục</div>
-            <div className={styles.mobileNavItem}>Khuyến mãi</div>
-            <div className={styles.mobileNavItem}>Sản phẩm</div>
-            <div className={styles.mobileNavItem}>Tin tức</div>
+            <div style={{fontWeight:800,marginBottom:12,fontSize:'1.2em'}}>Danh mục sản phẩm</div>
+            <div className={styles.categorySidebarList}>
+              {electronicPages.map((page, idx) => (
+                <div key={idx} className={styles.categorySidebarItem} onClick={() => {route.push(page.path); setMobileNavOpen(false);}}>
+                  <span style={{marginRight:16, fontSize:28}}>{page.icon}</span> <span>{page.name}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

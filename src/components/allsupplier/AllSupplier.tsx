@@ -29,7 +29,7 @@ import {
 } from "@mui/material";
 import { Add, Delete, Edit, Search } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { addSupplier, fetchSuppliers, Supplier, deleteSupplier } from "@/reduxslice/supplierSlice";
+import { addSupplier, fetchSuppliers, Supplier, deleteSupplier, updateSupplier } from "@/reduxslice/supplierSlice";
 import { AppDispatch } from "@/app/store";
 import FallbackImage from "./FallbackImage";
 
@@ -129,6 +129,19 @@ export default function AllSupplier() {
   });
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [uploading, setUploading] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
+  const [editForm, setEditForm] = useState<FormState>({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    status: true,
+    logoUrl: "",
+    note: "",
+    logoData: "",
+  });
+  const [editLogoPreview, setEditLogoPreview] = useState<string>("");
 
   useEffect(() => {
     dispatch(fetchSuppliers());
@@ -225,7 +238,19 @@ export default function AllSupplier() {
   };
 
   const handleOpenEditModal = (supplier: Supplier) => {
-    console.log("Edit supplier:", supplier);
+    setEditingSupplier(supplier);
+    setEditForm({
+      name: supplier.name,
+      email: supplier.email,
+      phone: supplier.phone,
+      address: supplier.address,
+      status: supplier.status,
+      logoUrl: supplier.logoUrl || "",
+      note: supplier.note || "",
+      logoData: supplier.logoData || "",
+    });
+    setEditLogoPreview(supplier.logoData || "");
+    setOpenEditModal(true);
   };
 
   const handleOpenDeleteModal = (supplier: Supplier) => {
@@ -244,6 +269,69 @@ export default function AllSupplier() {
         console.log(error);
       }
       handleCloseDeleteModal();
+    }
+  };
+
+  const handleCloseEditModal = () => {
+    setOpenEditModal(false);
+    setEditingSupplier(null);
+    setEditForm({
+      name: "",
+      email: "",
+      phone: "",
+      address: "",
+      status: true,
+      logoUrl: "",
+      note: "",
+      logoData: "",
+    });
+    setEditLogoPreview("");
+  };
+
+  const handleEditFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    if (name === "status") {
+      setEditForm((prevForm) => ({ ...prevForm, status: value === "active" }));
+    } else {
+      setEditForm((prevForm) => ({ ...prevForm, [name]: value }));
+    }
+  };
+
+  const handleEditLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setEditLogoPreview(URL.createObjectURL(file));
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setEditForm((prev) => ({ ...prev, logoData: reader.result as string, logoUrl: "" }));
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleUpdateSupplier = async () => {
+    if (!editingSupplier?._id) return;
+    if (!editForm.name || !editForm.email || !editForm.phone || !editForm.address) {
+      setSnackbar({ open: true, message: "Vui lòng điền đầy đủ thông tin!", severity: "warning" });
+      return;
+    }
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(editForm.email)) {
+      setSnackbar({ open: true, message: "Email không hợp lệ!", severity: "warning" });
+      return;
+    }
+    if (uploading) {
+      setSnackbar({ open: true, message: "Vui lòng chờ upload ảnh xong!", severity: "warning" });
+      return;
+    }
+    try {
+      await dispatch(updateSupplier({ id: editingSupplier._id, data: editForm })).unwrap();
+      setSnackbar({ open: true, message: "Đã cập nhật nhà cung cấp thành công!", severity: "success" });
+      handleCloseEditModal();
+      dispatch(fetchSuppliers());
+    } catch (error: any) {
+      const msg = error?.err || error?.message || error;
+      setSnackbar({ open: true, message: `Lỗi: ${msg}`, severity: "error" });
     }
   };
 
@@ -705,6 +793,155 @@ export default function AllSupplier() {
             disabled={uploading}
           >
             Thêm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Edit Supplier Dialog */}
+      <Dialog 
+        open={openEditModal} 
+        onClose={handleCloseEditModal}
+        PaperProps={{
+          sx: {
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+            color: 'white',
+            borderRadius: 3,
+            border: '1px solid rgba(255, 107, 53, 0.3)',
+            minWidth: 400,
+            maxWidth: '90vw',
+          }
+        }}
+      >
+        <DialogTitle sx={{
+          color: '#ff6b35',
+          fontWeight: 'bold',
+          fontSize: 20,
+          borderBottom: '1px solid rgba(255, 107, 53, 0.2)',
+        }}>
+          Sửa nhà cung cấp
+        </DialogTitle>
+        <DialogContent sx={{ pt: 3 }}>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Tên nhà cung cấp"
+            fullWidth
+            value={editForm.name}
+            name="name"
+            onChange={handleEditFormChange}
+            sx={muiInputStyle}
+          />
+          <TextField
+            margin="dense"
+            label="Email"
+            fullWidth
+            value={editForm.email}
+            name="email"
+            onChange={handleEditFormChange}
+            sx={muiInputStyle}
+          />
+          <TextField
+            margin="dense"
+            label="Số điện thoại"
+            fullWidth
+            value={editForm.phone}
+            name="phone"
+            onChange={handleEditFormChange}
+            sx={muiInputStyle}
+          />
+          <TextField
+            margin="dense"
+            label="Địa chỉ"
+            fullWidth
+            value={editForm.address}
+            name="address"
+            onChange={handleEditFormChange}
+            sx={muiInputStyle}
+          />
+          <TextField
+            margin="dense"
+            label="Ghi chú"
+            fullWidth
+            value={editForm.note}
+            name="note"
+            onChange={handleEditFormChange}
+            multiline
+            rows={2}
+            sx={muiInputStyle}
+          />
+          <Box sx={{ mt: 2, mb: 2 }}>
+            <Typography variant="subtitle2" sx={{ color: 'white', mb: 1 }}>
+              Logo nhà cung cấp
+            </Typography>
+            <Button
+              variant="contained"
+              component="label"
+              sx={{
+                background: 'linear-gradient(45deg, #ff6b35 0%, #f7931e 100%)',
+                color: 'white',
+                fontWeight: 'bold',
+                mb: 1,
+              }}
+              disabled={uploading}
+            >
+              {uploading ? "Đang tải..." : "Tải ảnh lên"}
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={handleEditLogoChange}
+              />
+            </Button>
+            {editLogoPreview || editForm.logoData ? (
+              <Box sx={{ mt: 1 }}>
+                <FallbackImage 
+                  width={80} 
+                  height={80}
+                  src={editLogoPreview || editForm.logoData}
+                  alt="Logo preview"
+                  style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid #eee' }}
+                />
+              </Box>
+            ) : null}
+          </Box>
+          <TextField
+            margin="dense"
+            label="Trạng thái"
+            fullWidth
+            select
+            value={editForm.status ? "active" : "inactive"}
+            name="status"
+            onChange={handleEditFormChange}
+            sx={muiInputStyle}
+          >
+            <MenuItem value="active">Hoạt động</MenuItem>
+            <MenuItem value="inactive">Không hoạt động</MenuItem>
+          </TextField>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button 
+            onClick={handleCloseEditModal}
+            sx={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.1)',
+              },
+            }}
+          >
+            Hủy
+          </Button>
+          <Button 
+            onClick={handleUpdateSupplier} 
+            variant="contained"
+            sx={{
+              background: 'linear-gradient(45deg, #ff6b35 0%, #f7931e 100%)',
+              '&:hover': {
+                background: 'linear-gradient(45deg, #f7931e 0%, #ff6b35 100%)',
+              },
+            }}
+            disabled={uploading}
+          >
+            Lưu
           </Button>
         </DialogActions>
       </Dialog>

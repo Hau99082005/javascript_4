@@ -89,6 +89,32 @@ export const deleteSupplier = createAsyncThunk<string, string, { rejectValue: st
   }
 );
 
+export const updateSupplier = createAsyncThunk<Supplier, { id: string; data: Partial<Supplier> }, { rejectValue: string }>(
+  'suppliers/updateSupplier',
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${process.env.API}/admin/supplier/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        return rejectWithValue(errorData.message || 'Cập nhật nhà cung cấp thất bại');
+      }
+      const updated = await response.json();
+      return updated.updatingSupplier;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message || 'Cập nhật nhà cung cấp thất bại');
+      }
+      return rejectWithValue('Cập nhật nhà cung cấp thất bại');
+    }
+  }
+);
+
 const supplierSlice = createSlice({
   name: "suppliers",
   initialState,
@@ -115,6 +141,9 @@ const supplierSlice = createSlice({
       })
       .addCase(deleteSupplier.fulfilled, (state, action: PayloadAction<string>) => {
         state.suppliers = state.suppliers.filter(s => s._id !== action.payload);
+      })
+      .addCase(updateSupplier.fulfilled, (state, action: PayloadAction<Supplier>) => {
+        state.suppliers = state.suppliers.map(s => s._id === action.payload._id ? action.payload : s);
       });
   },
 });

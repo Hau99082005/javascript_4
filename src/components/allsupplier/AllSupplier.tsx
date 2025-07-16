@@ -29,9 +29,9 @@ import {
 } from "@mui/material";
 import { Add, Delete, Edit, Search } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import Image from "next/image";
-import { addSupplier, fetchSuppliers, Supplier } from "@/reduxslice/supplierSlice";
+import { addSupplier, fetchSuppliers, Supplier, deleteSupplier } from "@/reduxslice/supplierSlice";
 import { AppDispatch } from "@/app/store";
+import FallbackImage from "./FallbackImage";
 
 interface SnackbarState {
   open: boolean;
@@ -47,6 +47,7 @@ interface FormState {
   status: boolean;
   logoUrl: string;
   note: string;
+  logoData: string; // Thêm logoData để lưu base64 của ảnh
 }
 
 interface RootState {
@@ -124,6 +125,7 @@ export default function AllSupplier() {
     status: true,
     logoUrl: "",
     note: "",
+    logoData: "", // Khởi tạo logoData
   });
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [uploading, setUploading] = useState(false);
@@ -151,6 +153,7 @@ export default function AllSupplier() {
       status: true,
       logoUrl: "",
       note: "",
+      logoData: "", // reset logoData
     });
     setLogoPreview("");
     setUploading(false);
@@ -169,14 +172,45 @@ export default function AllSupplier() {
     }
   };
 
+  const validateForm = () => {
+    if (!form.name || !form.email || !form.phone || !form.address) {
+      setSnackbar({ open: true, message: "Vui lòng điền đầy đủ thông tin!", severity: "warning" });
+      return false;
+    }
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
+      setSnackbar({ open: true, message: "Email không hợp lệ!", severity: "warning" });
+      return false;
+    }
+    if (uploading) {
+      setSnackbar({ open: true, message: "Vui lòng chờ upload ảnh xong!", severity: "warning" });
+      return false;
+    }
+    return true;
+  };
+
   const handleAddSupplier = async () => {
+    if (!validateForm()) return;
+    const supplierPayload = {
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      address: form.address,
+      status: !!form.status,
+      logoData: form.logoData,
+      note: form.note,
+    };
+    console.log(supplierPayload.logoData)
     try {
-      await dispatch(addSupplier(form)).unwrap();
+      await dispatch(addSupplier(supplierPayload)).unwrap();
       setSnackbar({ open: true, message: "Đã thêm nhà cung cấp thành công!", severity: "success" });
       handleCloseAddModal();
       dispatch(fetchSuppliers());
     } catch (error: any) {
-      setSnackbar({ open: true, message: `Lỗi: ${error.message || error}`, severity: "error" });
+      let msg = error?.err || error?.message || error;
+      if (msg?.includes("Email đã tồn tại")) {
+        msg = "Email đã tồn tại trong hệ thống!";
+      }
+      setSnackbar({ open: true, message: `Lỗi: ${msg}`, severity: "error" });
       console.log("Lỗi khi thêm nhà cung cấp ", error);
     }
   };
@@ -199,10 +233,16 @@ export default function AllSupplier() {
     setSupplierToDelete(supplier);
   };
 
-  const handleDeleteSupplier = () => {
-    if (supplierToDelete) {
-      console.log("Delete supplier:", supplierToDelete);
-      setSnackbar({ open: true, message: "Đã xóa nhà cung cấp thành công!", severity: "success" });
+  const handleDeleteSupplier = async () => {
+    if (supplierToDelete && supplierToDelete._id) {
+      try {
+        await dispatch(deleteSupplier(supplierToDelete._id)).unwrap();
+        setSnackbar({ open: true, message: "Đã xóa nhà cung cấp thành công!", severity: "success" });
+        dispatch(fetchSuppliers());
+      } catch (error: any) {
+        setSnackbar({ open: true, message: "Lỗi khi xóa nhà cung cấp!", severity: "error" });
+        console.log(error);
+      }
       handleCloseDeleteModal();
     }
   };
@@ -214,40 +254,18 @@ export default function AllSupplier() {
     supplier.address.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
-  const CLOUDINARY_UPLOAD_PRESET = "unsigned_preset"; // <-- Replace with your Cloudinary unsigned preset
-  const CLOUDINARY_CLOUD_NAME = "dwptfvir3"; // <-- Replace with your Cloudinary cloud name
-  const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
-
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
     setLogoPreview(URL.createObjectURL(file));
     setUploading(true);
-    
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-    
-    try {
-      const res = await fetch(CLOUDINARY_URL, {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-      if (res.ok && data.secure_url) {
-        setForm((prev) => ({ ...prev, logoUrl: data.secure_url }));
-      } else {
-        setSnackbar({ open: true, message: "Lỗi upload ảnh. Vui lòng thử lại.", severity: "error" });
-        setLogoPreview("");
-        setForm((prev) => ({ ...prev, logoUrl: "" })); // reset logoUrl nếu upload lỗi
-      }
+    // Chuyển file sang base64 và lưu vào logoData
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setForm((prev) => ({ ...prev, logoData: reader.result as string, logoUrl: "" }));
       setUploading(false);
-    } catch (err: any) {
-      setSnackbar({ open: true, message: `Lỗi upload ảnh: ${err}`, severity: "error" });
-      setLogoPreview("");
-      setUploading(false);
-    }
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -472,8 +490,8 @@ export default function AllSupplier() {
                       </Box>
                     </TableCell>
                     <TableCell>
-                      <Image
-                        src={supplier.logoUrl || "/images/fallback-logo.png"}
+                      <FallbackImage
+                        src={supplier.logoData ? supplier.logoData : "/images/fallback-logo.png"}
                         alt="Logo"
                         width={40}
                         height={40}
@@ -482,9 +500,6 @@ export default function AllSupplier() {
                           height: 40,
                           objectFit: 'cover',
                           borderRadius: '8px'
-                        }}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/images/fallback-logo.png";
                         }}
                       />
                     </TableCell>
@@ -640,12 +655,12 @@ export default function AllSupplier() {
                 onChange={handleLogoChange}
               />
             </Button>
-            {logoPreview || form.logoUrl ? (
+            {logoPreview || form.logoData ? (
               <Box sx={{ mt: 1 }}>
-                <Image 
-                  width={100} 
-                  height={100}
-                  src={logoPreview || form.logoUrl}
+                <FallbackImage 
+                  width={80} 
+                  height={80}
+                  src={logoPreview || form.logoData}
                   alt="Logo preview"
                   style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid #eee' }}
                 />

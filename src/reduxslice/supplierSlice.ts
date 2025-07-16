@@ -8,6 +8,7 @@ export interface Supplier {
   address: string;
   status: boolean;
   logoUrl?: string;
+  logoData?: string;
   note?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -32,10 +33,10 @@ export const fetchSuppliers = createAsyncThunk<Supplier[]>(
       const response = await fetch(`${process.env.API}/admin/supplier`);
       const data = await response.json();
       return data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error) {
       console.log("error fetching suppliers", error);
-      throw error;
+      if (error instanceof Error) throw error;
+      throw new Error('Đã có lỗi xảy ra');
     }
   }
 );
@@ -57,10 +58,33 @@ export const addSupplier = createAsyncThunk<Supplier, Supplier, { rejectValue: s
       }
       const data = await response.json();
       return data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error) {
       console.log("thêm vào nhà cung cấp thất bại", error);
-      return rejectWithValue(error.message || 'Đã có lỗi xảy ra');
+      if (error instanceof Error) {
+        return rejectWithValue(error.message || 'Đã có lỗi xảy ra');
+      }
+      return rejectWithValue('Đã có lỗi xảy ra');
+    }
+  }
+);
+
+export const deleteSupplier = createAsyncThunk<string, string, { rejectValue: string }>(
+  'suppliers/deleteSupplier',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${process.env.API}/admin/supplier/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        return rejectWithValue(errorData.message || 'Xóa nhà cung cấp thất bại');
+      }
+      return id;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message || 'Xóa nhà cung cấp thất bại');
+      }
+      return rejectWithValue('Xóa nhà cung cấp thất bại');
     }
   }
 );
@@ -88,6 +112,9 @@ const supplierSlice = createSlice({
       .addCase(fetchSuppliers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || null;
+      })
+      .addCase(deleteSupplier.fulfilled, (state, action: PayloadAction<string>) => {
+        state.suppliers = state.suppliers.filter(s => s._id !== action.payload);
       });
   },
 });

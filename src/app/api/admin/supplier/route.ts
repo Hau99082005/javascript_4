@@ -18,9 +18,14 @@ export async function POST(req: Request) {
   await dbConnect();
 
   const body = await req.json();
-  const {name, email, phone, address, status, logoUrl, note, createdAt, updatedAt} = body;
+  const {name, email, phone, address, status, logoUrl, logoData, note} = body;
   try {
-    const supplier = await Supplier.create({name, email, phone, address, status, logoUrl, note, createdAt, updatedAt})
+    // Validate các trường bắt buộc
+    if (!name || !email || !phone || !address) {
+      return NextResponse.json({err: "Thiếu thông tin bắt buộc."}, {status: 400});
+    }
+    // Nếu không có logoUrl và cũng không có logoData thì vẫn cho phép, sẽ dùng fallback ở FE
+    const supplier = await Supplier.create({name, email, phone, address, status, logoUrl, logoData, note});
     console.log("supplier", supplier);
     return NextResponse.json(supplier)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

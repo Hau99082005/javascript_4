@@ -64,7 +64,7 @@ export default function HomeClient() {
             <SearchIcon style={{ color: '#d70018', fontSize: 24, marginRight: 8 }} />
             <input className={styles.searchInput} placeholder="Nhập tên điện thoại, máy tính, phụ kiện... cần tìm" />
           </div>
-          <AccountCircleIcon className={styles.cartIcon} />
+          <AccountCircleIcon className={styles.cartIcon} onClick={() => route.push('/login')} />
           <ShoppingCartIcon className={styles.cartIcon} />
         </div>
       </div>

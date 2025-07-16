@@ -7,6 +7,7 @@ export interface ISupplier extends Document {
   address: string;
   status: boolean;
   logoUrl?: string;
+  logoData?: string;
   note?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -41,6 +42,10 @@ const SupplierSchema: Schema = new Schema({
     default: true,
   },
   logoUrl: {
+    type: String,
+    default: "",
+  },
+  logoData: {
     type: String,
     default: "",
   },

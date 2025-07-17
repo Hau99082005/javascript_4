@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addUnit, fetchUnits, deleteUnit, Unit, updateUnit } from "@/reduxslice/UnitsSlice";
 import { AppDispatch } from "@/app/store";
 
-export default function AllUnits() {  
+export default function AllUnits() {
   const dispatch = useDispatch<AppDispatch>();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { units, loading, error } = useSelector((state: any) => state.units);
@@ -126,7 +126,7 @@ export default function AllUnits() {
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box, Button, TextField, Typography, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, IconButton, Dialog, DialogTitle, DialogContent,
@@ -9,24 +9,24 @@ import {
 } from "@mui/material";
 import { Delete, Add, Edit, Search, Person } from "@mui/icons-material";
 import Technology from "../nav/Technology";
-
-interface Customer {
-  _id: string;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  image?: string;
-  status?: boolean;
-}
+import { addCustomer, fetchCustomers, deleteCustomer } from "@/reduxslice/customerSlice";
+import { useDispatch, useSelector } from "react-redux";
+// Nếu không có @/store, tạm thời dùng any cho RootState
+// import type { RootState } from "@/store";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type RootState = any;
+import type { Customer } from "@/reduxslice/customerSlice";
 
 export default function AllCustomers() {
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Nếu không có AppDispatch, tạm thời dùng any cho dispatch
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dispatch: any = useDispatch();
+  const { customers, loading, error } = useSelector((state: RootState) => state.customers);
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [newCustomerImagePreview, setNewCustomerImagePreview] = useState<string | null>(null);
+  const [editCustomerImagePreview, setEditCustomerImagePreview] = useState<string | null>(null);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [filter, setFilter] = useState("");
   const [page, setPage] = useState(0);
@@ -36,49 +36,32 @@ export default function AllCustomers() {
     message: "",
     severity: "success" as "success" | "error",
   });
-
   // Form states
-  const [newCustomer, setNewCustomer] = useState({
+  const [newCustomer, setNewCustomer] = useState<Omit<Customer, "_id">>({
     name: "",
     email: "",
     phone: "",
     address: "",
     image: "",
   });
-  const [editCustomer, setEditCustomer] = useState({
+  const [editCustomer, setEditCustomer] = useState<Omit<Customer, "_id">>({
     name: "",
     email: "",
     phone: "",
     address: "",
     image: "",
   });
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   useEffect(() => {
-    fetchCustomers();
-  }, []);
-
-  const fetchCustomers = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/customers');
-      if (response.ok) {
-        const data = await response.json();
-        setCustomers(data);
-      } else {
-        setError('Không thể tải danh sách khách hàng');
-      }
-    } catch (error: unknown) {
-      setError('Lỗi kết nối');
-      console.error('Error fetching customers:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    dispatch(fetchCustomers());
+  }, [dispatch]);
 
   const handleOpenAddModal = () => setOpenAddModal(true);
   const handleCloseAddModal = () => {
     setOpenAddModal(false);
     setNewCustomer({ name: "", email: "", phone: "", address: "", image: "" });
+    setNewCustomerImagePreview(null);
   };
 
   const handleOpenEditModal = (customer: Customer) => {
@@ -90,6 +73,7 @@ export default function AllCustomers() {
       address: customer.address,
       image: customer.image || "",
     });
+    setEditCustomerImagePreview(customer.image || null);
     setOpenEditModal(true);
   };
   const handleCloseEditModal = () => setOpenEditModal(false);
@@ -102,31 +86,16 @@ export default function AllCustomers() {
 
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
-  const handleAddCustomer = async () => {
-    if (!newCustomer.name.trim() || !newCustomer.email.trim()) {
-      setSnackbar({ open: true, message: "Vui lòng nhập đầy đủ thông tin!", severity: "error" });
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/customers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newCustomer),
-      });
-
-      if (response.ok) {
-        setSnackbar({ open: true, message: "Thêm khách hàng thành công!", severity: "success" });
+  const handleAddCustomer = () => {
+    dispatch(addCustomer(newCustomer))
+      .unwrap()
+      .then(() => {
         handleCloseAddModal();
-        fetchCustomers();
-      } else {
-        const errorData = await response.json();
-        setSnackbar({ open: true, message: `Lỗi: ${errorData.message}`, severity: "error" });
-      }
-    } catch (error: unknown) {
-      setSnackbar({ open: true, message: "Lỗi kết nối", severity: "error" });
-      console.error('Error adding customer:', error);
-    }
+        setSnackbar({ open: true, message: "Thêm khách hàng thành công!", severity: "success" });
+      })
+      .catch((error: unknown) => {
+        setSnackbar({ open: true, message: `Lỗi ${error instanceof Error ? error.message : String(error)}`, severity: "error" });
+      });
   };
 
   const handleEditCustomer = async () => {
@@ -134,67 +103,39 @@ export default function AllCustomers() {
       setSnackbar({ open: true, message: "Vui lòng nhập đầy đủ thông tin!", severity: "error" });
       return;
     }
-
     try {
       const response = await fetch(`/api/customers/${selectedCustomer._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editCustomer),
       });
-
       if (response.ok) {
         setSnackbar({ open: true, message: "Cập nhật khách hàng thành công!", severity: "success" });
         handleCloseEditModal();
-        fetchCustomers();
+        dispatch(fetchCustomers());
       } else {
         const errorData = await response.json();
         setSnackbar({ open: true, message: `Lỗi: ${errorData.message}`, severity: "error" });
       }
     } catch (error: unknown) {
-      setSnackbar({ open: true, message: "Lỗi kết nối", severity: "error" });
-      console.error('Error editing customer:', error);
+      setSnackbar({ open: true, message: `Lỗi kết nối: ${error instanceof Error ? error.message : String(error)}`, severity: "error" });
     }
   };
 
-  const handleDeleteCustomer = async () => {
+  const handleDeleteCustomer = () => {
     if (!selectedCustomer) return;
-
-    try {
-      const response = await fetch(`/api/customers/${selectedCustomer._id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        setSnackbar({ open: true, message: "Xóa khách hàng thành công!", severity: "success" });
+    dispatch(deleteCustomer(selectedCustomer._id))
+      .unwrap()
+      .then(() => {
         handleCloseDeleteModal();
-        fetchCustomers();
-      } else {
-        const errorData = await response.json();
-        setSnackbar({ open: true, message: `Lỗi: ${errorData.message}`, severity: "error" });
-      }
-    } catch (error: unknown) {
-      setSnackbar({ open: true, message: "Lỗi kết nối", severity: "error" });
-      console.error('Error deleting customer:', error);
-    }
+        setSnackbar({ open: true, message: "Xoá khách hàng khỏi danh sách thành công!", severity: "success" });
+      })
+      .catch((error: unknown) => {
+        setSnackbar({ open: true, message: `Lỗi ${error instanceof Error ? error.message : String(error)}`, severity: "error" });
+      });
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>, isEdit = false) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64 = e.target?.result as string;
-        if (isEdit) {
-          setEditCustomer({ ...editCustomer, image: base64 });
-        } else {
-          setNewCustomer({ ...newCustomer, image: base64 });
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const filteredCustomers = customers.filter((customer) =>
+  const filteredCustomers = customers.filter((customer: Customer) =>
     customer.name.toLowerCase().includes(filter.toLowerCase()) ||
     customer.email.toLowerCase().includes(filter.toLowerCase())
   );
@@ -210,6 +151,63 @@ export default function AllCustomers() {
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/upload`;
+  let CLOUDINARY_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+  if (!CLOUDINARY_PRESET) {
+    CLOUDINARY_PRESET = 'ml_default'; // Thay bằng tên preset unsigned thực tế của bạn nếu khác
+  }
+  console.log('CLOUDINARY_PRESET used:', CLOUDINARY_PRESET);
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<Omit<Customer, "_id">>>,
+    previewSetter: React.Dispatch<React.SetStateAction<string | null>>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setIsUploadingImage(true);
+      const fileUrl = URL.createObjectURL(file);
+      previewSetter(fileUrl);
+
+      let CLOUDINARY_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+      if (!CLOUDINARY_PRESET) {
+        CLOUDINARY_PRESET = 'ml_default'; // Đổi thành tên preset unsigned thực tế nếu khác
+      }
+
+      // Cảnh báo nếu preset chưa đúng
+      if (!CLOUDINARY_PRESET || CLOUDINARY_PRESET === 'ml_default') {
+        alert(
+          "⚠️ Bạn chưa cấu hình đúng Cloudinary upload preset hoặc preset 'ml_default' chưa tồn tại trên Cloudinary.\n" +
+          "Vui lòng vào Cloudinary Dashboard > Settings > Upload > Upload presets để tạo preset unsigned tên 'ml_default' (hoặc tên bạn muốn)!"
+        );
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", CLOUDINARY_PRESET!);
+      console.log('Upload preset sent:', CLOUDINARY_PRESET);
+
+      try {
+        const response = await fetch(CLOUDINARY_UPLOAD_URL, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+        console.log('Cloudinary response:', data);
+        if (data.secure_url) {
+          setter((prev) => ({ ...prev, image: data.secure_url }));
+          setSnackbar({ open: true, message: "Upload ảnh thành công!", severity: "success" });
+        } else {
+          setSnackbar({ open: true, message: data.error?.message || "Lỗi upload ảnh!", severity: "error" });
+        }
+      } catch (error) {
+        setSnackbar({ open: true, message: `Lỗi: ${error instanceof Error ? error.message : String(error)}`, severity: "error" });
+      } finally {
+        setIsUploadingImage(false);
+      }
+    }
   };
 
   return (
@@ -230,7 +228,6 @@ export default function AllCustomers() {
         <Box sx={{ display: "inline-block", mb: 1 }}>
           <Technology />
         </Box>
-
         {/* Dòng mô tả bên dưới */}
         <Typography
           variant="h6"
@@ -242,7 +239,6 @@ export default function AllCustomers() {
           Quản lý thông tin khách hàng hiệu quả
         </Typography>
       </Box>
-
       {/* Main Content Container */}
       <Box sx={{
         maxWidth: 1200,
@@ -285,7 +281,6 @@ export default function AllCustomers() {
             Quản lý khách hàng
           </Typography>
         </Box>
-
         {/* Search and Add Button */}
         <Box sx={{
           display: 'flex',
@@ -349,7 +344,6 @@ export default function AllCustomers() {
             Thêm khách hàng
           </Button>
         </Box>
-
         {/* Loading */}
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
@@ -429,7 +423,7 @@ export default function AllCustomers() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredCustomers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((customer, idx) => (
+                  {filteredCustomers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((customer: Customer, idx: number) => (
                     <TableRow
                       key={customer._id}
                       sx={{
@@ -548,7 +542,6 @@ export default function AllCustomers() {
                 </TableBody>
               </Table>
             </TableContainer>
-
             {/* Pagination */}
             <Box sx={{
               display: 'flex',
@@ -577,7 +570,6 @@ export default function AllCustomers() {
           </>
         )}
       </Box>
-
       {/* Add Customer Modal */}
       <Dialog 
         open={openAddModal} 
@@ -605,7 +597,7 @@ export default function AllCustomers() {
           <TextField
             autoFocus
             margin="dense"
-            label="Tên khách hàng"
+            label="Name"
             fullWidth
             value={newCustomer.name}
             onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
@@ -666,7 +658,7 @@ export default function AllCustomers() {
           />
           <TextField
             margin="dense"
-            label="Số điện thoại"
+            label="Phone"
             fullWidth
             value={newCustomer.phone}
             onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
@@ -696,7 +688,7 @@ export default function AllCustomers() {
           />
           <TextField
             margin="dense"
-            label="Địa chỉ"
+            label="Address"
             fullWidth
             multiline
             rows={3}
@@ -735,6 +727,7 @@ export default function AllCustomers() {
               '&:hover': {
                 background: 'linear-gradient(45deg, #f7931e 0%, #ff6b35 100%)',
               },
+              position: 'relative',
             }}
           >
             Tải ảnh
@@ -742,17 +735,20 @@ export default function AllCustomers() {
               type="file" 
               hidden 
               accept="image/*" 
-              onChange={handleImageUpload}
+              onChange={e => { void handleFileChange(e, setNewCustomer, setNewCustomerImagePreview); }}
             />
+            {isUploadingImage && (
+              <CircularProgress size={20} sx={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: 'white' }} />
+            )}
           </Button>
-          {newCustomer.image && (
+          {newCustomerImagePreview && (
             <Box sx={{ mt: 2 }}>
               <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 1 }}>
                 Ảnh đã chọn:
               </Typography>
               <Box
                 component="img"
-                src={newCustomer.image}
+                src={newCustomerImagePreview}
                 alt="Preview"
                 sx={{
                   width: 100,
@@ -776,9 +772,10 @@ export default function AllCustomers() {
           >
             Hủy
           </Button>
-          <Button 
+          <Button
             onClick={handleAddCustomer} 
             variant="contained"
+            disabled={!newCustomer.image || isUploadingImage}
             sx={{
               background: 'linear-gradient(45deg, #ff6b35 0%, #f7931e 100%)',
               '&:hover': {
@@ -955,17 +952,17 @@ export default function AllCustomers() {
               type="file" 
               hidden 
               accept="image/*" 
-              onChange={(e) => handleImageUpload(e, true)}
+              onChange={e => { void handleFileChange(e, setEditCustomer, setEditCustomerImagePreview); }}
             />
           </Button>
-          {editCustomer.image && (
+          {editCustomerImagePreview && (
             <Box sx={{ mt: 2 }}>
               <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 1 }}>
                 Ảnh hiện tại:
-              </Typography>
+          </Typography>
               <Box
                 component="img"
-                src={editCustomer.image}
+                src={editCustomerImagePreview}
                 alt="Preview"
                 sx={{
                   width: 100,
@@ -974,7 +971,7 @@ export default function AllCustomers() {
                   objectFit: 'cover',
                 }}
               />
-            </Box>
+        </Box>
           )}
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>

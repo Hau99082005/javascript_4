@@ -1,12 +1,15 @@
 import type { NextConfig } from "next";
-import { DB_URI, API, NEXTAUTH_SECRET,GOOGLE_API_KEY } from "./config";
+import { DB_URI, API, NEXTAUTH_SECRET,GOOGLE_API_KEY ,CLOUDINARY_CLOUD_NAME,CLOUDINARY_API_KEY,CLOUDINARY_API_SECRET} from "./config";
 
 const nextConfig: NextConfig = {
   env: {
     DB_URI,
     API,
     NEXTAUTH_SECRET,
-    GOOGLE_API_KEY
+    GOOGLE_API_KEY,
+    CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET
   },
   images: {
     remotePatterns: [

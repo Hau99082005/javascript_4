@@ -1,18 +1,28 @@
-import { NextResponse } from 'next/server';
-
-// Lưu tạm vào biến (chỉ dùng cho demo, không dùng cho production)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const customers: any[] = [];
+import { NextRequest, NextResponse } from 'next/server';
+import dbConnect from '@/utils/dbConnect';
+import Customer from '@/model/customer';
 
 export async function GET() {
-  // Trả về danh sách khách hàng
-  return NextResponse.json(customers);
+  await dbConnect();
+  try {
+    const customers = await Customer.find({});
+    return NextResponse.json(customers);
+  } catch (err: unknown) {
+    let message = 'Lỗi tải danh sách khách hàng';
+    if (err instanceof Error) message = err.message;
+    return NextResponse.json({ message: `Lỗi tải danh sách khách hàng: ${message}` }, { status: 500 });
+  }
 }
 
-export async function POST(req: Request) {
-  const body = await req.json();
-  // Tạo id giả lập
-  const newCustomer = { ...body, _id: Date.now().toString() };
-  customers.push(newCustomer);
-  return NextResponse.json(newCustomer, { status: 201 });
+export async function POST(req: NextRequest) {
+  await dbConnect();
+  const data = await req.json();
+  try {
+    const newCustomer = await Customer.create(data);
+    return NextResponse.json(newCustomer, { status: 201 });
+  } catch (err: unknown) {
+    let message = 'Lỗi thêm khách hàng';
+    if (err instanceof Error) message = err.message;
+    return NextResponse.json({ message: `Lỗi thêm khách hàng: ${message}` }, { status: 500 });
+  }
 } 

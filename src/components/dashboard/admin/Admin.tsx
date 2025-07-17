@@ -25,7 +25,7 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Technology from "@/components/nav/Technology";
-import { Business, Category, PeopleOutline, StraightenOutlined } from "@mui/icons-material";
+import { Business, Category, PeopleOutline, ShoppingCartOutlined, StraightenOutlined } from "@mui/icons-material";
 
 const drawerWidth = 300;
 
@@ -93,6 +93,7 @@ export default function User({ children }: { children?: React.ReactNode }) {
     const router = useRouter();
     const [menuOpen, setMenuOpen] = React.useState(false);
     const [isCollapse, setIsCollapse] = React.useState(false);
+    const [isCollapseProducts, setIsCollapseProducts] = React.useState(false);
     const [isCollapseCustomers, setIsCollapseCustomers] = React.useState(false);
     const [isCollapseSupplier, setIsCollapseSupplier] = React.useState(false);
 
@@ -121,6 +122,9 @@ export default function User({ children }: { children?: React.ReactNode }) {
     }
     const handleCollapseseCustomers = () => {
         setIsCollapseCustomers(!isCollapseCustomers);
+    }
+    const handleCollapseseProducts = () => {
+        setIsCollapseProducts(!isCollapseProducts);
     }
     return (
         <Box sx={{ display: "flex", minHeight: "100vh", background: "#f5f6fa" }}>
@@ -401,6 +405,52 @@ export default function User({ children }: { children?: React.ReactNode }) {
 
 
                    {/* end customer */}
+
+                   {/* start products */}    
+                    <ListItem disablePadding 
+                   sx={{ display: "block"}} onClick={handleCollapseseProducts}>
+                    <ListItemButton
+                    sx={{
+                        minHeight: 50,
+                        justifyContent: open ? "initial" : "center",
+                        px: 3,
+                    }}>
+                    <ListItemIcon
+                    sx={{minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                    }}>
+                    <ShoppingCartOutlined sx={{ color: "white"}}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Sản phẩm" sx={{opacity: 1}}>
+                     {isCollapseProducts ? <ExpandLess/> : <ExpandMore/>}
+                    </ListItemText>
+                 
+                    </ListItemButton>
+                   </ListItem>
+
+                     <Collapse in={isCollapseProducts} timeout="auto" unmountOnExit>
+                   {["all-products"].map((text) => (
+                    <ListItem key={text} disablePadding sx={{display: "block"}}>
+                    <ListItemButton
+                    onClick={() => handleNavigation(text)}
+                    sx={{
+                        minHeight: 50,
+                        justifyContent: open ? "initial" : "center",
+                        px: 3,
+                        marginLeft: "30px",
+                        color: "white",
+                        borderBottom: "1px solid white",
+                    }}>
+                     <ListItemText
+                     primary={text.replace(/-/g," ")}
+                     sx={{ opacity: open ? 1 : 0}}>
+                     </ListItemText>
+                    </ListItemButton>
+                    </ListItem>
+                   ))}
+                   </Collapse>
+                   {/* end products */}
                 </List>
             </Drawer>
            <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>

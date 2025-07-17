@@ -25,7 +25,7 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Technology from "@/components/nav/Technology";
-import { Category, StraightenOutlined } from "@mui/icons-material";
+import { Business, Category, PeopleOutline, StraightenOutlined } from "@mui/icons-material";
 
 const drawerWidth = 300;
 
@@ -93,6 +93,7 @@ export default function User({ children }: { children?: React.ReactNode }) {
     const router = useRouter();
     const [menuOpen, setMenuOpen] = React.useState(false);
     const [isCollapse, setIsCollapse] = React.useState(false);
+    const [isCollapseCustomers, setIsCollapseCustomers] = React.useState(false);
     const [isCollapseSupplier, setIsCollapseSupplier] = React.useState(false);
 
     const handleCollapseseSupplier=()=> {
@@ -118,7 +119,9 @@ export default function User({ children }: { children?: React.ReactNode }) {
     const handleCollapseseSessions = () => {
         setIsCollapseSections(!isCollapseSessions);
     }
-    
+    const handleCollapseseCustomers = () => {
+        setIsCollapseCustomers(!isCollapseCustomers);
+    }
     return (
         <Box sx={{ display: "flex", minHeight: "100vh", background: "#f5f6fa" }}>
             <CssBaseline />
@@ -318,7 +321,7 @@ export default function User({ children }: { children?: React.ReactNode }) {
                         mr: open ? 3 : "auto",
                         justifyContent: "center",
                     }}>
-                    <StraightenOutlined sx={{ color: "white"}}/>
+                    <Business sx={{ color: "white"}}/>
                     </ListItemIcon>
                     <ListItemText primary="Nhà cung cấp" sx={{opacity: 1}}>
                      {isCollapseSupplier ? <ExpandLess/> : <ExpandMore/>}
@@ -349,6 +352,55 @@ export default function User({ children }: { children?: React.ReactNode }) {
                    ))}
                    </Collapse>
                    {/* end allunit  */}
+                   {/* start customers */}
+                    
+                    <ListItem disablePadding 
+                   sx={{ display: "block"}} onClick={handleCollapseseCustomers}>
+                    <ListItemButton
+                    sx={{
+                        minHeight: 50,
+                        justifyContent: open ? "initial" : "center",
+                        px: 3,
+                    }}>
+                    <ListItemIcon
+                    sx={{minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                    }}>
+                    <PeopleOutline sx={{ color: "white"}}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Khách Hàng" sx={{opacity: 1}}>
+                     {isCollapseCustomers ? <ExpandLess/> : <ExpandMore/>}
+                    </ListItemText>
+                 
+                    </ListItemButton>
+                   </ListItem>
+
+                     <Collapse in={isCollapseCustomers} timeout="auto" unmountOnExit>
+                   {["all-customers"].map((text) => (
+                    <ListItem key={text} disablePadding sx={{display: "block"}}>
+                    <ListItemButton
+                    onClick={() => handleNavigation(text)}
+                    sx={{
+                        minHeight: 50,
+                        justifyContent: open ? "initial" : "center",
+                        px: 3,
+                        marginLeft: "30px",
+                        color: "white",
+                        borderBottom: "1px solid white",
+                    }}>
+                     <ListItemText
+                     primary={text.replace(/-/g," ")}
+                     sx={{ opacity: open ? 1 : 0}}>
+                     </ListItemText>
+                    </ListItemButton>
+                    </ListItem>
+                   ))}
+                   </Collapse>
+                   {/* end allunit  */}
+
+
+                   {/* end customer */}
                 </List>
             </Drawer>
            <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>

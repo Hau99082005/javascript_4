@@ -106,16 +106,16 @@ const muiInputStyle = {
 export default function AllSupplier() {
   const dispatch = useDispatch<AppDispatch>();
   const { suppliers, loading, error } = useSelector((state: RootState) => state.suppliers);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [supplierToDelete, setSupplierToDelete] = useState<Supplier | null>(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [openAddModal, setOpenAddModal] = useState(false);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [openAddModal, setOpenAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [snackbar, setSnackbar] = useState<SnackbarState>({
-    open: false,
-    message: "",
-    severity: 'success',
+        open: false,
+        message: "",
+        severity: 'success',
   });
   const [form, setForm] = useState<FormState>({
     name: "",
@@ -132,31 +132,31 @@ export default function AllSupplier() {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
   const [editForm, setEditForm] = useState<FormState>({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
     status: true,
-    logoUrl: "",
-    note: "",
+        logoUrl: "",
+        note: "",
     logoData: "",
   });
   const [editLogoPreview, setEditLogoPreview] = useState<string>("");
 
-  useEffect(() => {
+    useEffect(() => {
     dispatch(fetchSuppliers());
   }, [dispatch]);
 
   const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
+        setPage(newPage);
+    };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
 
-  const handleCloseAddModal = () => {
+    const handleCloseAddModal = () => {
     setOpenAddModal(false);
     setForm({
       name: "",
@@ -172,8 +172,8 @@ export default function AllSupplier() {
     setUploading(false);
   };
 
-  const handleOpenAddModal = () => {
-    setOpenAddModal(true);
+    const handleOpenAddModal = () => {
+        setOpenAddModal(true);
   };
 
   const handleFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -232,8 +232,8 @@ export default function AllSupplier() {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const handleCloseDeleteModal = () => {
-    setOpenDeleteModal(false);
+    const handleCloseDeleteModal = () => {
+        setOpenDeleteModal(false);
     setSupplierToDelete(null);
   };
 
@@ -427,8 +427,8 @@ export default function AllSupplier() {
             🏢
           </Box>
           <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'white' }}>
-            Nhà Cung Cấp
-          </Typography>
+        Nhà Cung Cấp
+     </Typography>
         </Box>
 
         {/* Search and Add Button */}
@@ -439,14 +439,14 @@ export default function AllSupplier() {
           mb: 3,
           gap: 2
         }}>
-          <TextField
+       <TextField
             placeholder="Tìm kiếm nhà cung cấp..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            sx={{
+       sx={{
               flexGrow: 1,
               maxWidth: '400px',
-              '& .MuiOutlinedInput-root': {
+        '& .MuiOutlinedInput-root': {
                 background: 'rgba(255, 255, 255, 0.9)',
                 borderRadius: '25px',
                 '& fieldset': {
@@ -469,10 +469,10 @@ export default function AllSupplier() {
             }}
           />
           <Button
-            variant="contained"
+          variant="contained"
             startIcon={<Add />}
             onClick={handleOpenAddModal}
-            sx={{
+          sx={{
               background: 'linear-gradient(45deg, #ff6b35, #f7931e)',
               borderRadius: '25px',
               px: 3,
@@ -482,9 +482,9 @@ export default function AllSupplier() {
               '&:hover': {
                 background: 'linear-gradient(45deg, #e55a2b, #e8851a)',
               },
-            }}
+          }}
           >
-            Thêm nhà cung cấp
+         Thêm nhà cung cấp
           </Button>
         </Box>
 
@@ -497,8 +497,8 @@ export default function AllSupplier() {
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}
         >
-          <Table>
-            <TableHead>
+      <Table>
+       <TableHead>
               <TableRow sx={{ 
                 background: 'linear-gradient(45deg, #ff6b35, #f7931e)',
               }}>
@@ -511,20 +511,20 @@ export default function AllSupplier() {
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Logo</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Ghi chú</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Thao tác</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loading ? (
-                <TableRow>
+        </TableRow>
+       </TableHead>
+       <TableBody>
+        {loading ? (
+            <TableRow>
                   <TableCell colSpan={9}>
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", py: 4 }}>
                       <CircularProgress sx={{ color: '#ff6b35' }} />
                       <Typography sx={{ ml: 2, color: '#666' }}>Đang tải...</Typography>
                     </Box>
-                  </TableCell>
-                </TableRow>
-              ) : error ? (
-                <TableRow>
+                </TableCell>
+            </TableRow>
+        ) : error ? (
+            <TableRow>
                   <TableCell 
                     colSpan={9}
                     sx={{ 
@@ -536,8 +536,8 @@ export default function AllSupplier() {
                     }}
                   >
                     Lỗi: {error}
-                  </TableCell>
-                </TableRow>
+                </TableCell>
+            </TableRow>
               ) : filteredSuppliers && filteredSuppliers.length > 0 ? (
                 filteredSuppliers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((supplier: Supplier, idx: number) => (
                   <TableRow 
@@ -560,9 +560,9 @@ export default function AllSupplier() {
                       {page * rowsPerPage + idx + 1}
                     </TableCell>
                     <TableCell sx={{ fontWeight: '500' }}>{supplier.name}</TableCell>
-                    <TableCell>{supplier.email}</TableCell>
-                    <TableCell>{supplier.phone}</TableCell>
-                    <TableCell>{supplier.address}</TableCell>
+            <TableCell>{supplier.email}</TableCell>
+            <TableCell>{supplier.phone}</TableCell>
+            <TableCell>{supplier.address}</TableCell>
                     <TableCell>
                       <Box sx={{
                         display: 'inline-block',
@@ -591,8 +591,8 @@ export default function AllSupplier() {
                         }}
                       />
                     </TableCell>
-                    <TableCell>{supplier.note}</TableCell>
-                    <TableCell>
+            <TableCell>{supplier.note}</TableCell>
+            <TableCell>
                       <Box sx={{ display: 'flex', gap: 1 }}>
                         <IconButton 
                           onClick={() => handleOpenEditModal(supplier)}
@@ -602,7 +602,7 @@ export default function AllSupplier() {
                           }}
                         >
                           <Edit />
-                        </IconButton>
+                </IconButton>
                         <IconButton 
                           onClick={() => handleOpenDeleteModal(supplier)}
                           sx={{ 
@@ -611,7 +611,7 @@ export default function AllSupplier() {
                           }}
                         >
                           <Delete />
-                        </IconButton>
+                </IconButton>
                       </Box>
                     </TableCell>
                   </TableRow>
@@ -622,11 +622,11 @@ export default function AllSupplier() {
                     <Typography variant="body1" color="text.secondary">
                       Không tìm thấy nhà cung cấp nào
                     </Typography>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+            </TableCell>
+            </TableRow>
+        )}
+       </TableBody>
+      </Table>
           
           <TablePagination
             component="div"
@@ -998,12 +998,12 @@ export default function AllSupplier() {
 
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={6000}
+      autoHideDuration={6000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert
-          onClose={handleCloseSnackbar}
+        onClose={handleCloseSnackbar}
           severity={snackbar.severity}
           sx={{ width: '100%' }}
         >
@@ -1011,5 +1011,5 @@ export default function AllSupplier() {
         </Alert>
       </Snackbar>
     </Box>
-  );
+    );
 }

@@ -177,11 +177,11 @@ export default function Technology() {
         <TechSVG />
       </TechFloat>
       <span>
-        {logoText.split("").map((char, index) => (
-          <StyledChar key={index} index={index}>
-            {char}
-          </StyledChar>
-        ))}
+      {logoText.split("").map((char, index) => (
+        <StyledChar key={index} index={index}>
+          {char}
+        </StyledChar>
+      ))}
       </span>
     </Box>
   );

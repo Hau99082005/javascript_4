@@ -64,33 +64,33 @@ const BannerContent = styled(Box)({
   padding: '2rem',
 });
 
-const BackgroundBox = styled(Box)({
+  const BackgroundBox = styled(Box)({
   backgroundImage: 'url("/images/img3.webp")',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  position: 'relative',
-  padding: '4rem 2rem',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    position: 'relative',
+    padding: '4rem 2rem',
   minHeight: '100vh',
-  color: '#fff',
-  overflow: 'hidden',
-});
-const Overlay = styled(Box)({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: 'rgba(0,0,0,0.6)',
-  zIndex: 1,
-});
-const ContentBox = styled(Box)({
-  position: 'relative',
-  zIndex: 2,
+    color: '#fff',
+    overflow: 'hidden',
+  });
+  const Overlay = styled(Box)({
+    position: 'absolute',
+    top: 0, 
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    zIndex: 1,
+  });
+  const ContentBox = styled(Box)({
+    position: 'relative',
+    zIndex: 2,
 });
 
 export default function Analitic() {
-  const router = useRouter();
+ const router = useRouter();
   return (
     <BackgroundBox>
       <Overlay />
@@ -110,51 +110,51 @@ export default function Analitic() {
         {/* Quick Access section */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Typography
-            variant="h3"
-            sx={{
-              fontWeight: 'bold',
+          variant="h3"
+          sx={{
+            fontWeight: 'bold',
               mb: 4,
-              background: 'linear-gradient(90deg, #ff8a00, #f55742)',
-              WebkitBackgroundClip: 'text',
+            background: 'linear-gradient(90deg, #ff8a00, #f55742)',
+            WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               textAlign: 'center',
             }}
           >
             Dashboard Quick Access
           </Typography>
-          <Grid container spacing={4} justifyContent="center">
+           <Grid container spacing={4} justifyContent="center">
             {pages.map((page, index) => (
               <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
                 <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: index * 0.1, duration: 0.5 }}>
-                  <Card
-                    sx={{
-                      minHeight: 200,
-                      boxShadow: 5,
-                      borderRadius: 2,
+                <Card
+                sx={{
+                  minHeight: 200,
+                  boxShadow: 5,
+                  borderRadius: 2,
                       backgroundColor: '#23272f',
-                      color: '#fff',
+                  color: '#fff',
                       transition: 'transform 0.3s, background-color 0.3s',
-                      '&:hover': {
+                  '&:hover': {
                         transform: 'scale(1.05)',
                         backgroundColor: '#ff8a00',
-                        color: '#fff',
-                      },
+                    color: '#fff',
+                  },
                     }}
                   >
                     <CardActionArea sx={{ textAlign: "center", p: 3 }} onClick={() => router.push(page.path)}>
                       <Box sx={{ fontSize: 40, mb: 1, color: 'inherit', display: 'flex', justifyContent: 'center' }}>{page.icon}</Box>
                       <Typography variant="h5" component="div" sx={{ color: 'inherit', fontWeight: 600 }}>
                         {page.name}
-                      </Typography>
-                      <Typography variant="body2" color="inherit">
+                    </Typography>
+                    <Typography variant="body2" color="inherit">
                         {`Go to ${page.path} section`}
-                      </Typography>
-                    </CardActionArea>
-                  </Card>
-                </motion.div>
+                    </Typography>
+                  </CardActionArea>
+                </Card>
+               </motion.div>
               </Grid>
             ))}
-          </Grid>
+           </Grid>
         </motion.div>
         {/* Categories section */}
         <Box sx={{ mt: 6 }}>

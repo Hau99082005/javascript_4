@@ -15,8 +15,8 @@ export default function Pages() {
       <Analitic/>
       <Box sx={{ mt: 6 }}>
         <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: '#ff8a00', textAlign: 'center', letterSpacing: 1 }}>
-          Recent Transection
-        </Typography>
+      Recent Transection
+     </Typography>
         <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 3, maxWidth: 900, mx: 'auto', background: '#23272f' }}>
           <Table>
             <TableHead>

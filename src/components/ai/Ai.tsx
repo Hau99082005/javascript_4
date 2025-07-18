@@ -90,15 +90,15 @@ export default function AiComponent() {
                         onKeyPress={handleKeyPress}
                         disabled={loading}
                         placeholder="Nhập câu hỏi của bạn ở đây... (Ctrl + Enter để gửi nhanh)"
-                        InputLabelProps={{
+          InputLabelProps={{
                             style: { color: 'text.primary' },
                         }} 
                         sx={{ 
-                            '& .MuiOutlinedInput-root': {
-                                '& fieldset': {
+            '& .MuiOutlinedInput-root': {
+                '& fieldset': {
                                     borderColor: '#d32f2f',
-                                },
-                                '&:hover fieldset': {
+                },
+                '&:hover fieldset': {
                                     borderColor: '#f44336',
                                 },
                                 '&.Mui-focused fieldset': {
@@ -144,7 +144,7 @@ export default function AiComponent() {
                         )}
                     </Button>
                 </Box>
-            </form>
+     </form>
             
             <Modal 
                 open={open} 
@@ -152,7 +152,7 @@ export default function AiComponent() {
                 aria-labelledby="modal-title" 
                 aria-describedby="modal-description"
             >
-                <Box sx={style}>
+       <Box sx={style}>
                     <Typography 
                         id="modal-title" 
                         variant="h5" 
@@ -165,8 +165,8 @@ export default function AiComponent() {
                             pb: 1
                         }}
                     >
-                        Phản hồi của AI
-                    </Typography>
+         Phản hồi của AI
+        </Typography>
                     <Typography 
                         id="modal-description" 
                         sx={{ 
@@ -195,8 +195,8 @@ export default function AiComponent() {
                             Đóng
                         </Button>
                     </Box>
-                </Box>
-            </Modal>
+       </Box>
+     </Modal>
         </Container>
     );
 }

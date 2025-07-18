@@ -78,11 +78,11 @@ export const updateSupplier = createAsyncThunk<Supplier, { id: string; data: Par
 export const fetchSuppliers = createAsyncThunk<Supplier[]>(
   'suppliers/fetchSupplies',
   async () => {
-    try {
-      const response = await fetch(`${process.env.API}/admin/supplier`);
+   try {
+    const response = await fetch(`${process.env.API}/admin/supplier`);
       const data = await response.json();
       return data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.log("error fetching suppliers", error);
       throw error;
@@ -93,35 +93,35 @@ export const fetchSuppliers = createAsyncThunk<Supplier[]>(
 export const addSupplier = createAsyncThunk<Supplier, Supplier, { rejectValue: string }>(
   'suppliers/addSupplier',
   async (newSupplier, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`${process.env.API}/admin/supplier`, {
-        method: 'POST',
-        headers: {
+ try {
+   const response = await fetch(`${process.env.API}/admin/supplier`, {
+    method: 'POST',
+    headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newSupplier),
       });
       if (!response.ok) {
-        const errorData = await response.json();
+    const errorData = await response.json();
         return rejectWithValue(errorData.message || 'Đã có lỗi xảy ra');
       }
       const data = await response.json();
 console.log(data)  
       return data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+ // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.log("thêm vào nhà cung cấp thất bại", error);
-      return rejectWithValue(error.message || 'Đã có lỗi xảy ra');
-    }
+    console.log("thêm vào nhà cung cấp thất bại", error);
+    return rejectWithValue(error.message || 'Đã có lỗi xảy ra');
+ }
   }
 );
 
 const supplierSlice = createSlice({
-  name: "suppliers",
+    name: "suppliers",
   initialState,
-  reducers: {},
+    reducers: {},
   extraReducers: (builder) => {
-    builder
+      builder
       .addCase(addSupplier.fulfilled, (state, action: PayloadAction<Supplier>) => {
         if (action.payload) {
           state.suppliers.push(action.payload);

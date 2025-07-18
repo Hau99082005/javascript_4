@@ -70,31 +70,31 @@ export default function Transection() {
               key={index}
               sx={{
                 "&:hover": {
-                  backgroundColor: theme.palette.action.hover,
-                },
+              backgroundColor: theme.palette.action.hover,
+            },
               }}
             >
-              <TableCell>
-                <Box display="flex" alignItems="center">
-                  <Typography variant="body2">{transaction.name}</Typography>
-                </Box>
-              </TableCell>
-              {!isSmallScreen && (
-                <TableCell>
-                  <Typography variant="body2">{transaction.position}</Typography>
-                </TableCell>
-              )}
-              <TableCell>
-                <Box display="flex" alignItems="center">
+          <TableCell>
+            <Box display="flex" alignItems="center">
+               <Typography variant="body2">{transaction.name}</Typography>
+            </Box>
+          </TableCell>
+          {!isSmallScreen && (
+            <TableCell>
+              <Typography variant="body2">{transaction.position}</Typography>
+            </TableCell>
+          )}
+          <TableCell>
+            <Box display="flex" alignItems="center">
                   <CircleIcon style={{ color: transaction.statusColor, fontSize: 12, marginRight: 4 }} />
-                  <Typography variant="body2">{transaction.status}</Typography>
-                </Box>
-              </TableCell>
-              {!isSmallScreen && (
-                <TableCell>
-                  <Typography variant="body2">{transaction.age}</Typography>
-                </TableCell>
-              )}
+             <Typography variant="body2">{transaction.status}</Typography>
+            </Box>
+          </TableCell>
+            {!isSmallScreen && (
+             <TableCell>
+              <Typography variant="body2">{transaction.age}</Typography>
+             </TableCell>
+            )}
               {!isSmallScreen && (
                 <TableCell>
                   <Typography variant="body2">

@@ -276,10 +276,10 @@ export default function AllCustomers() {
               color: '#ff6b35',
               fontWeight: 'bold',
               textShadow: '1px 1px 2px rgba(255, 107, 53, 0.3)',
-            }}
-          >
+        }}
+      >
             Quản lý khách hàng
-          </Typography>
+      </Typography>
         </Box>
         {/* Search and Add Button */}
         <Box sx={{
@@ -359,8 +359,8 @@ export default function AllCustomers() {
               border: '1px solid rgba(255, 107, 53, 0.2)',
               overflow: 'hidden',
             }}>
-              <Table>
-                <TableHead>
+        <Table>
+          <TableHead>
                   <TableRow sx={{
                     background: 'linear-gradient(90deg, #ff6b35 0%, #f7931e 100%)',
                   }}>
@@ -420,9 +420,9 @@ export default function AllCustomers() {
                     }}>
                       Thao tác
                     </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
+            </TableRow>
+          </TableHead>
+          <TableBody>
                   {filteredCustomers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((customer: Customer, idx: number) => (
                     <TableRow
                       key={customer._id}
@@ -539,9 +539,9 @@ export default function AllCustomers() {
                       </TableCell>
                     </TableRow>
                   )}
-                </TableBody>
-              </Table>
-            </TableContainer>
+          </TableBody>
+        </Table>
+      </TableContainer>
             {/* Pagination */}
             <Box sx={{
               display: 'flex',

@@ -10,7 +10,7 @@ import { Box, Button, TextField, Typography, IconButton, Table, TableBody, Table
  import { fetchUnits } from "@/reduxslice/UnitsSlice";
  import { fetchCategories } from "@/reduxslice/categorySlice";
  import { fetchSuppliers } from "@/reduxslice/supplierSlice";
- import { addProduct, fetchProducts, Product, deleteProduct } from "@/reduxslice/productSlice";
+ import { addProduct, fetchProducts, Product, deleteProduct, updateProduct} from "@/reduxslice/productSlice";
 
 import { Edit, Add, Delete } from "@mui/icons-material";
 import { CircularProgress } from "@mui/material";
@@ -43,6 +43,7 @@ export default function AllProducts() {
     const [openEditModal, setOpenEditModal] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [editProduct, setEditProduct] = useState({
+        _id: "", // Thêm dòng này
         productName: "",
         description: "",
         price: "",
@@ -115,7 +116,6 @@ export default function AllProducts() {
     useEffect(() => {
      dispatch(fetchUnits())
      dispatch(fetchProducts())
-
      dispatch(fetchSuppliers())
      dispatch(fetchCategories())
     }, [dispatch])
@@ -129,6 +129,7 @@ export default function AllProducts() {
 
     const handleOpenEditModal = (product: Product) => {
         setEditProduct({
+            _id: product._id || "", // Thêm dòng này
             productName: product.productName || "",
             description: product.description || "",
             price: product.price?.toString() || "",
@@ -228,6 +229,20 @@ export default function AllProducts() {
 
     const handleCloseSnackbar= () => {
         setSnackbar({...snackbar, open: false});
+    }
+
+    const handleEditProduct = () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        dispatch(updateProduct({ ...editProduct as any }))
+        .unwrap()
+        .then(()=> {
+            setSnackbar({open: true, message: "Đã sửa sản phẩm thành công!", severity: "success"});
+            handleCloseEditModal()
+        })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .catch((error : any) => {
+          setSnackbar({open: true, message: `Lỗi ${error}`, severity: "error"})
+        })
     }
 
     const handleCloseDeleteModal = () => setOpenDeleteModal(false);
@@ -1470,13 +1485,14 @@ export default function AllProducts() {
           </Button>
           <Button
             variant="contained"
-            onClick={() => handleAddProduct()} 
+            onClick={() => handleEditProduct()} 
             sx={{
               background: "orangered",
               ':hover': {
                 background: "orangered",
               },
             }}
+
           >
             Lưu
           </Button>

@@ -36,7 +36,7 @@ const initialState: ProductState = {
 
 export const updateProduct = createAsyncThunk("products/updateProduct",async(updateProduct: Product) => {
     const response = await fetch(`${process.env.API}/admin/products/${updateProduct._id}`, {
-      method: "POST",
+      method: "PUT", // Đổi từ POST sang PUT
       headers: {
         'Content-Type': 'application/json'
       },

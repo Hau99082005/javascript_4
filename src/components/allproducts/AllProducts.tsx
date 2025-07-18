@@ -146,11 +146,18 @@ export default function AllProducts() {
             unitNameId: product.unitNameId || "",
             categoryNameId: product.categoryNameId || "",
             supplierNameId: product.supplierNameId || "",
-        })
+        });
+        setImagePreview(product.image || null);
+        setGalleryPreview(
+          Array.isArray(product.gallery)
+            ? product.gallery
+            : typeof product.gallery === 'string' && product.gallery
+              ? product.gallery.split(',')
+              : []
+        );
         setSelectedProduct(product);
         setOpenEditModal(true);
-        
-    }
+    };
 
     const handleDeleteProduct = () => {
         if (!selectedProduct) return;
@@ -1331,7 +1338,15 @@ export default function AllProducts() {
             <InputLabel sx={{ color: 'black' }}>Tên nhà cung cấp</InputLabel>
              <Select 
               value={editProduct.supplierNameId}
-              onChange={(e) => setEditProduct({...editProduct, supplierNameId: e.target.value})}
+              onChange={(e) => {
+                const selectedSupplier = suppliers.find(supplier => supplier._id === e.target.value);
+                if (selectedSupplier) {
+                setEditProduct({
+                ...editProduct,
+                supplierNameId: selectedSupplier._id,
+               });
+            }
+              }}
              sx={{
                 mt: 3,
                 color: "black",
@@ -1363,7 +1378,15 @@ export default function AllProducts() {
             <InputLabel sx={{ color: 'black' }}>Tên đơn vị</InputLabel>
              <Select 
               value={editProduct.unitNameId}
-              onChange={(e) => setEditProduct({...editProduct, unitNameId: e.target.value})}
+              onChange={(e) => {
+                const selectedUnits = units.find(units => units._id === e.target.value);
+                if (selectedUnits) {
+                setEditProduct({
+                ...editProduct,
+                unitNameId: selectedUnits._id,
+               });
+            }
+              }}
              sx={{
                 mt: 3,
                 color: "black",
@@ -1395,7 +1418,15 @@ export default function AllProducts() {
             <InputLabel sx={{ color: 'black' }}>Tên danh mục</InputLabel>
              <Select 
               value={editProduct.categoryNameId}
-              onChange={(e) => setEditProduct({...editProduct, categoryNameId: e.target.value})}
+              onChange={(e) => {
+                const selectedCategory = categories.find(category => category._id === e.target.value);
+                if (selectedCategory) {
+                setEditProduct({
+                ...editProduct,
+                categoryNameId: selectedCategory._id,
+               });
+            }
+              }}
              sx={{
                 mt: 3,
                 color: "black",

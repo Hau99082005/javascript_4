@@ -34,6 +34,18 @@ const initialState: ProductState = {
   error: null,
 };
 
+export const updateProduct = createAsyncThunk("products/updateProduct",async(updateProduct: Product) => {
+    const response = await fetch(`${process.env.API}/admin/products/${updateProduct._id}`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updateProduct)
+    })
+    const data = await response.json()
+    return data
+})
+
 // Fetch all products
 export const fetchProducts = createAsyncThunk<Product[]>(
   "products/fetchProducts",
@@ -109,6 +121,13 @@ const productSlice = createSlice({
         state.products = state.products.filter(
           (prod) => prod._id !== action.payload
         );
+      })
+      //update sản phẩm
+      .addCase(updateProduct.fulfilled, (state, action) =>{
+        if(action.payload) {
+          const index = state.products.findIndex(prod => prod._id === action.payload._id);
+          state.products[index] = action.payload
+        }
       });
   },
 });
